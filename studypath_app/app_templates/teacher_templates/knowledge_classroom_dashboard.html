@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>10th Physics - Section A | StudyPath Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#10b981",
+                        "background-light": "#f9fafb",
+                        "background-dark": "#10221c",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "body": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-display {
+            font-family: 'Lexend', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-tab {
+            @apply border-primary text-primary border-b-2;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex">
+<aside class="w-[260px] h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed left-0 top-0 z-50">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-2xl">auto_stories</span>
+</div>
+<div>
+<h1 class="font-display font-bold text-lg leading-tight text-slate-900 dark:text-white">StudyPath Pro</h1>
+<p class="text-[10px] uppercase tracking-wider font-bold text-primary/80">Sindh Board Edition</p>
+</div>
+</div>
+<nav class="flex-1 px-4 mt-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_dashboard' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_dashboard') }}">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-display text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_classrooms' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_classrooms') }}">
+<span class="material-symbols-outlined">school</span>
+<span class="font-display text-sm">Classrooms</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_curriculum' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_curriculum') }}">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-display text-sm">Curriculum</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition-colors" a href="{{ url_for('teacher_report') }}">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-display text-sm">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition-colors" a href="{{ url_for('teacher_profile') }}">
+<span class="material-symbols-outlined">person</span>
+<span class="font-display text-sm">Profile</span>
+</a>
+</nav>
+<div class="p-6 mt-auto">
+<div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary overflow-hidden">
+<img alt="Teacher profile avatar" class="w-full h-full object-cover" src="{{ url_for('static', filename='images/teacher_avatar.png') }}"/>
+</div>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-slate-900 dark:text-white truncate">Sir Ahmed</p>
+<p class="text-[10px] text-slate-500 truncate">Senior Educator</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 ml-[260px] min-h-screen flex flex-col">
+<header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 py-6">
+<div class="flex items-center gap-4 mb-2">
+<a href="{{ url_for('teacher_classrooms') }}" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</a>
+<nav class="flex text-xs font-medium text-slate-400 gap-2 items-center">
+<a href="{{ url_for('teacher_classrooms') }}" class="hover:text-primary">Classrooms</a>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-primary">10th Class Physics - Section A</span>
+</nav>
+</div>
+<div class="flex justify-between items-center">
+<h2 class="font-display text-2xl font-bold text-slate-900 dark:text-white">10th Class Physics - Section A</h2>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-bold rounded-full">42 Students</span>
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">share</span> Share Link
+                </button>
+</div>
+</div>
+</header>
+<div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8">
+<div class="flex gap-8">
+<a href="{{ url_for('teacher_roadmap') }}" class="py-4 text-sm font-semibold {{ 'active-tab' if active_page == 'teacher_roadmap' else 'text-slate-500 hover:text-slate-700 border-b-2 border-transparent' }} transition-all">AI Roadmap</a>
+<a href="{{ url_for('teacher_student_progress') }}" class="py-4 text-sm font-semibold {{ 'active-tab' if active_page == 'teacher_student_progress' else 'text-slate-500 hover:text-slate-700 border-b-2 border-transparent' }} transition-all">Student Progress</a>
+<a href="{{ url_for('teacher_knowledge_dashboard') }}" class="py-4 text-sm font-semibold {{ 'active-tab' if active_page == 'teacher_knowledge_dashboard' else 'text-slate-500 hover:text-slate-700 border-b-2 border-transparent' }} transition-all">Knowledge Base</a>
+<a href="{{ url_for('teacher_quiz_factory') }}" class="py-4 text-sm font-semibold {{ 'active-tab' if active_page == 'teacher_quiz_factory' else 'text-slate-500 hover:text-slate-700 border-b-2 border-transparent' }} transition-all">Quiz Factory</a>
+</div>
+</div>
+<div class="p-8 lg:p-12 flex-1">
+<div class="max-w-5xl mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 space-y-8">
+<section>
+<div class="mb-6">
+<h3 class="font-display text-xl font-bold text-slate-900 dark:text-white mb-2">Feed Sir Ahmed AI</h3>
+<p class="text-slate-500 text-sm">Upload your Sindh Board notes, textbook PDFs, or past papers. The AI will process these to generate roadmaps and personalized quizzes for your students.</p>
+</div>
+<div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-12 bg-white dark:bg-slate-900 flex flex-col items-center justify-center text-center group hover:border-primary transition-all cursor-pointer">
+<div class="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-full flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">upload_file</span>
+</div>
+<h4 class="font-display font-bold text-lg mb-1">Upload Physics Materials</h4>
+<p class="text-slate-400 text-sm mb-6">Drag and drop files here, or click to browse</p>
+<div class="flex flex-wrap justify-center gap-3">
+<span class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-medium text-slate-500 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">picture_as_pdf</span> PDF
+                                </span>
+<span class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-medium text-slate-500 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">description</span> DOCX
+                                </span>
+<span class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-medium text-slate-500 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">image</span> JPG/PNG
+                                </span>
+</div>
+</div>
+</section>
+<section>
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-display font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                Processed Documents
+                                <span class="w-5 h-5 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-[10px] text-slate-500">3</span>
+</h3>
+<button class="text-primary text-xs font-bold hover:underline">View All</button>
+</div>
+<div class="space-y-3">
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl flex items-center justify-between group hover:shadow-md transition-shadow">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded flex items-center justify-center">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<div>
+<h5 class="text-sm font-bold text-slate-900 dark:text-white">Sindh Board Physics Book Vol 1</h5>
+<p class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Processed 2 days ago • 14.2 MB</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded">AI Analyzed</span>
+<button class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl flex items-center justify-between group hover:shadow-md transition-shadow">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded flex items-center justify-center">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<h5 class="text-sm font-bold text-slate-900 dark:text-white">Kinematics Chapter Notes - Updated</h5>
+<p class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Processed 4 days ago • 2.1 MB</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded">AI Analyzed</span>
+<button class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl flex items-center justify-between group hover:shadow-md transition-shadow">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded flex items-center justify-center">
+<span class="material-symbols-outlined">assignment</span>
+</div>
+<div>
+<h5 class="text-sm font-bold text-slate-900 dark:text-white">Past Paper Solved 2023 - Karachi Board</h5>
+<p class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Processed 1 week ago • 5.8 MB</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded">AI Analyzed</span>
+<button class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<div class="space-y-6">
+<div class="bg-primary/5 dark:bg-primary/10 border border-primary/20 rounded-2xl p-6">
+<h4 class="font-display font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">psychology</span>
+                            AI Intelligence Summary
+                        </h4>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500">Topics Identified</span>
+<span class="font-bold text-slate-900 dark:text-white">12 Chapters</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500">Generated MCQs</span>
+<span class="font-bold text-slate-900 dark:text-white">450+</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500">Roadmap Status</span>
+<span class="font-bold text-emerald-500">Optimized</span>
+</div>
+<div class="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800">
+<button class="w-full py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 transition-all">
+                                    Regenerate Roadmap
+                                </button>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
+<h4 class="font-display font-bold text-slate-900 dark:text-white mb-4">Quick Links</h4>
+<div class="space-y-2">
+<a href="{{ url_for('teacher_quiz_factory') }}" class="w-full p-3 flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all">
+<span class="material-symbols-outlined text-slate-400">quiz</span>
+Open Quiz Factory
+</a>
+<a href="{{ url_for('teacher_roadmap') }}" class="w-full p-3 flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all">
+<span class="material-symbols-outlined text-slate-400">timeline</span>
+View Roadmap Timeline
+</a>
+<a href="{{ url_for('teacher_student_progress') }}" class="w-full p-3 flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all">
+<span class="material-symbols-outlined text-slate-400">leaderboard</span>
+Student Progress
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
+
+

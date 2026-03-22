@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{{ subject }} Classroom Dashboard | StudyPath AI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#3713ec",
+                "background-light": "#f8fafc",
+                "background-dark": "#131022",
+              },
+              fontFamily: {
+                "display": ["Inter", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .sidebar-item-active { 
+            background-color: rgba(55, 19, 236, 0.1); 
+            color: #3713ec; 
+            border-right: 4px solid #3713ec; 
+        }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<aside class="w-[260px] bg-white border-r border-slate-200 fixed h-full z-50">
+    <div class="p-8">
+        <div class="flex items-center gap-2 mb-10">
+            <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <span class="material-symbols-outlined text-white text-xl">auto_awesome</span>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight">StudyPath AI</h1>
+        </div>
+        <nav class="space-y-2">
+            <a href="{{ url_for('student_index') }}" class="{% if active_page == 'student_index' %}sidebar-item-active{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
+                <span class="material-symbols-outlined">dashboard</span>
+                Classroom
+            </a>
+            <a href="{{ url_for('analysis') }}" class="{% if active_page == 'analysis' %}sidebar-item-active{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
+                <span class="material-symbols-outlined">analytics</span>
+                Analysis
+            </a>
+            <a href="{{ url_for('inbox') }}" class="{% if active_page == 'inbox' %}sidebar-item-active{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
+                <span class="material-symbols-outlined">mail</span>
+                Inbox
+            </a>
+            <a href="{{ url_for('profile') }}" class="{% if active_page == 'profile' %}sidebar-item-active{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
+                <span class="material-symbols-outlined">person</span>
+                Profile
+            </a>
+        </nav>
+    </div>
+</aside>
+
+    <main class="flex-1 ml-[260px] bg-[#f8fafc] p-10">
+        <header class="flex items-center justify-between mb-10">
+            <div class="flex items-center gap-4">
+                <a href="{{ url_for('student_index') }}" class="size-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-white transition-all">
+                    <span class="material-symbols-outlined text-slate-600">arrow_back</span>
+                </a>
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900">{{ subject }} Dashboard</h2>
+                    <p class="text-slate-500 text-sm font-medium">Topic-wise learning & preparation</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3 bg-white p-1.5 pl-4 rounded-full border border-slate-200">
+                <span class="text-xs font-bold text-slate-600">Preparation Level: <span class="text-primary italic">Excellent</span></span>
+                <div class="size-10 rounded-full bg-slate-100 border-2 border-white overflow-hidden shadow-sm">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ user.full_name }}" alt="Avatar"/>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-12 gap-8">
+            <div class="col-span-8 space-y-8">
+                <div class="relative overflow-hidden bg-slate-900 rounded-3xl p-10 text-white shadow-2xl shadow-primary/20">
+                    <div class="relative z-10 max-w-lg">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/20 rounded-full mb-6 border border-primary/30">
+                            <span class="size-2 rounded-full bg-primary animate-pulse"></span>
+                            <span class="text-[10px] font-black uppercase tracking-wider">AI Tutor is Ready</span>
+                        </div>
+                        <h3 class="text-4xl font-black mb-4 leading-tight">Master {{ subject }} with Sir Ahmed.</h3>
+                        <p class="text-slate-400 font-medium mb-8 leading-relaxed">Poochein koi bhi sawal ya start karein ek naya topic. Sir Ahmed har waqt aapki madad ke liye maujood hain.</p>
+                        <a href="{{ url_for('ai_tutor', subject=subject) }}" class="inline-flex items-center gap-3 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-2xl transition-all shadow-lg shadow-primary/40">
+                            Open AI Tutor
+                            <span class="material-symbols-outlined">smart_toy</span>
+                        </a>
+                    </div>
+                    <div class="absolute right-[-5%] top-[-10%] size-80 bg-primary/20 rounded-full blur-[100px]"></div>
+                    <span class="material-symbols-outlined absolute right-12 bottom-12 text-[180px] opacity-10 rotate-12">auto_awesome</span>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <h4 class="text-xl font-black text-slate-900">Learning Path</h4>
+                        <button class="text-xs font-bold text-primary hover:underline">View Full Curriculum</button>
+                    </div>
+                    
+                    <div id="roadmapList" class="space-y-4">
+                        <div class="text-center py-8">
+                            <div class="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-2"></div>
+                            <p class="text-sm text-slate-500">Loading roadmaps...</p>
+                        </div>
+                    </div>
+                </div>
+                                    <h5 class="font-bold text-slate-900">Complex Concepts & Applications</h5>
+                                    <p class="text-xs text-primary font-bold mt-1">Currently Learning • 6 Topics Left</p>
+                                </div>
+                            </div>
+                            <button class="px-6 py-2.5 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/90 transition-all">Resume</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-4 space-y-8">
+                <div class="bg-white rounded-3xl border border-slate-200 p-8">
+                    <h4 class="text-lg font-black text-slate-900 mb-6">Exam Readiness</h4>
+                    <div class="flex flex-col items-center text-center">
+                        <div class="relative size-40 mb-6">
+                            <svg class="size-full" viewBox="0 0 36 36">
+                                <path class="text-slate-100" stroke-width="3" fill="none" stroke="currentColor" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="text-primary" stroke-width="3" stroke-dasharray="75, 100" stroke-linecap="round" fill="none" stroke="currentColor" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="text-3xl font-black text-slate-900">75%</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Score</span>
+                            </div>
+                        </div>
+                        <p class="text-sm font-medium text-slate-600 mb-6">You are doing better than <span class="text-primary font-bold">82%</span> of Sindh Board students.</p>
+                        <button class="w-full py-4 bg-slate-50 border border-slate-200 text-slate-900 font-bold rounded-2xl hover:bg-white transition-all">Full Performance Report</button>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 rounded-3xl p-8 border border-amber-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <h4 class="font-black text-amber-900">Daily Goal</h4>
+                        <span class="material-symbols-outlined text-amber-600">bolt</span>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 mb-6 border border-amber-200/50 shadow-sm">
+                        <p class="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-2">Next Milestone</p>
+                        <h5 class="text-sm font-bold text-slate-900 mb-4">Chemical Equilibrium Quiz</h5>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-[10px] font-bold text-amber-700 uppercase mb-1">
+                                <span>Completion Status</span>
+                                <span>75% Done</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-amber-200 rounded-full overflow-hidden">
+                                <div class="w-3/4 h-full bg-amber-600"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="w-full py-2.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
+                        Resume Practice
+                        <span class="material-symbols-outlined text-base">arrow_forward</span>
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 p-4 hover:shadow-md transition-shadow group flex flex-col justify-between border-dashed">
+                    <div class="flex flex-col items-center justify-center h-full text-center py-6">
+                        <div class="w-12 h-12 rounded-full bg-slate-50 text-slate-300 flex items-center justify-center mb-3">
+                            <span class="material-symbols-outlined text-3xl">quiz</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-600">Chapter Assessment</h4>
+                        <p class="text-[11px] text-slate-400 mt-1 px-4">Complete the required topics to unlock the chapter exam.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    // Load roadmaps for this subject
+    async function loadRoadmaps() {
+        const subject = '{{ subject }}';
+        try {
+            const response = await fetch(`/get-roadmaps/${subject}`);
+            const data = await response.json();
+            
+            const container = document.getElementById('roadmapList');
+            
+            if (data.roadmaps && data.roadmaps.length > 0) {
+                container.innerHTML = data.roadmaps.map((rm, index) => `
+                    <a href="/roadmap/${rm.id}" class="block bg-white rounded-2xl border border-slate-200 p-6 hover:border-primary transition-all group">
+                        <div class="flex items-center gap-6">
+                            <div class="size-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/5 group-hover:text-primary transition-colors">
+                                <span class="text-xl font-black">${String(index + 1).padStart(2, '0')}</span>
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="font-bold text-slate-900">${rm.topic}</h5>
+                                <p class="text-xs text-slate-500 mt-1 italic">${rm.content.modules ? rm.content.modules.length : 0} Modules • AI Generated</p>
+                            </div>
+                            <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">chevron_right</span>
+                        </div>
+                    </a>
+                `).join('');
+            } else {
+                container.innerHTML = `
+                    <div class="text-center py-8 bg-white rounded-2xl border border-slate-200">
+                        <span class="material-symbols-outlined text-4xl text-slate-300 mb-2">route</span>
+                        <p class="text-sm text-slate-500">No roadmaps available yet</p>
+                        <p class="text-xs text-slate-400 mt-1">Your teacher will create learning paths soon</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Error loading roadmaps:', error);
+            document.getElementById('roadmapList').innerHTML = `
+                <div class="text-center py-8 bg-red-50 rounded-2xl border border-red-200">
+                    <p class="text-sm text-red-600">Error loading roadmaps</p>
+                </div>
+            `;
+        }
+    }
+    
+    // Load on page load
+    document.addEventListener('DOMContentLoaded', loadRoadmaps);
+    </script>
+</body>
+</html>
+

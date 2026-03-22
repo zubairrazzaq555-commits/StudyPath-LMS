@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Student Messaging Inbox - StudyPath AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#3713ec",
+                "background-light": "#f6f6f8",
+                "background-dark": "#131022",
+              },
+              fontFamily: {
+                "display": ["Lexend", "sans-serif"],
+                "sans": ["Lexend", "sans-serif"],
+              },
+              borderRadius: {
+                "xl": "1rem",
+                "2xl": "1.5rem",
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-item-active {
+            background-color: rgba(55, 19, 236, 0.1);
+            color: #3713ec;
+            border-right: 4px solid #3713ec;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark flex h-screen overflow-hidden">
+<aside class="w-[260px] bg-white border-r border-slate-200 fixed h-full z-50">
+    <div class="p-8">
+        <div class="flex items-center gap-2 mb-10">
+            <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <span class="material-symbols-outlined text-white text-xl">auto_awesome</span>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight">StudyPath AI</h1>
+        </div>
+        <nav class="space-y-2">
+            <a href="{{ url_for('student_index') }}" class="{% if active_page == 'student_index' %}sidebar-item-active bg-primary/10 text-primary border-r-4 border-primary{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
+                <span class="material-symbols-outlined">dashboard</span>
+                Classroom
+            </a>
+            <a href="{{ url_for('analysis') }}" class="{% if active_page == 'analysis' %}sidebar-item-active bg-primary/10 text-primary border-r-4 border-primary{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
+                <span class="material-symbols-outlined">analytics</span>
+                Analysis
+            </a>
+            <a href="{{ url_for('inbox') }}" class="{% if active_page == 'inbox' %}sidebar-item-active bg-primary/10 text-primary border-r-4 border-primary{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
+                <span class="material-symbols-outlined">mail</span>
+                Inbox
+            </a>
+            <a href="{{ url_for('profile') }}" class="{% if active_page == 'profile' %}sidebar-item-active bg-primary/10 text-primary border-r-4 border-primary{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
+                <span class="material-symbols-outlined">person</span>
+                Profile
+            </a>
+        </nav>
+    </div>
+</aside>
+<main class="flex-1 flex overflow-hidden ml-[260px]">
+<section class="w-full lg:w-96 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800">
+<h2 class="text-2xl font-black text-slate-900 dark:text-white mb-6">Messages</h2>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+<input class="w-full pl-12 pr-4 py-3.5 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20 dark:text-slate-200" placeholder="Search conversations..." type="text"/>
+</div>
+<div class="flex gap-2 mt-6 overflow-x-auto pb-2 custom-scrollbar">
+<button class="px-5 py-2 bg-primary text-white text-[11px] font-black rounded-full uppercase tracking-wider whitespace-nowrap">All</button>
+<button class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-500 text-[11px] font-black rounded-full uppercase tracking-wider whitespace-nowrap">Teachers</button>
+<button class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-500 text-[11px] font-black rounded-full uppercase tracking-wider whitespace-nowrap">Peers</button>
+<button class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-500 text-[11px] font-black rounded-full uppercase tracking-wider whitespace-nowrap">Groups</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar">
+<div class="p-5 flex items-center gap-4 bg-primary/5 border-l-4 border-primary cursor-pointer hover:bg-primary/10 transition-colors">
+<div class="relative flex-shrink-0">
+<div class="size-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-sm">
+<span class="material-symbols-outlined text-3xl">school</span>
+</div>
+<div class="absolute -bottom-1 -right-1 size-5 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
+</div>
+<div class="flex-1 overflow-hidden">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-bold text-slate-900 dark:text-white truncate">Sir Ahmed</h4>
+<span class="text-[10px] font-bold text-primary">2:45 PM</span>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 truncate">Beta, check your chemistry assignments once more.</p>
+</div>
+<div class="size-2 bg-primary rounded-full"></div>
+</div>
+<div class="p-5 flex items-center gap-4 border-b border-slate-50 dark:border-slate-800 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="relative flex-shrink-0">
+<img alt="Avatar" class="size-14 rounded-2xl object-cover shadow-sm" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Hamza"/>
+<div class="absolute -bottom-1 -right-1 size-5 bg-slate-300 border-2 border-white dark:border-slate-900 rounded-full"></div>
+</div>
+<div class="flex-1 overflow-hidden">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-bold text-slate-900 dark:text-white truncate">Hamza (Peer)</h4>
+<span class="text-[10px] font-bold text-slate-400">10:20 AM</span>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 truncate">Bro, did you solve the 3rd numerical of physics?</p>
+</div>
+</div>
+<div class="p-5 flex items-center gap-4 border-b border-slate-50 dark:border-slate-800 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="relative flex-shrink-0">
+<div class="size-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-black">X</div>
+</div>
+<div class="flex-1 overflow-hidden">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-bold text-slate-900 dark:text-white truncate">Study Group X</h4>
+<span class="text-[10px] font-bold text-slate-400">Yesterday</span>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 truncate">Ali: Let's meet at 5 PM for group study.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="hidden lg:flex flex-1 flex-col bg-background-light dark:bg-background-dark relative">
+<header class="h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8">
+<div class="flex items-center gap-4">
+<div class="size-11 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+<span class="material-symbols-outlined">school</span>
+</div>
+<div>
+<h3 class="font-black text-slate-900 dark:text-white">Sir Ahmed</h3>
+<div class="flex items-center gap-2">
+<span class="size-2 bg-green-500 rounded-full animate-pulse"></span>
+<span class="text-[10px] font-black text-green-500 uppercase tracking-widest">Teacher • Online</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">
+<span class="material-symbols-outlined">videocam</span>
+</button>
+<button class="p-2.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">
+<span class="material-symbols-outlined">call</span>
+</button>
+<div class="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-2"></div>
+<button class="p-2.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+<div class="flex gap-4 max-w-[75%] group">
+<div class="size-10 rounded-2xl bg-indigo-100 text-indigo-600 flex-shrink-0 flex items-center justify-center self-end mb-1">
+<span class="material-symbols-outlined">school</span>
+</div>
+<div>
+<div class="p-5 bg-white dark:bg-slate-900 rounded-2xl rounded-bl-none shadow-sm border border-slate-100 dark:border-slate-800 relative group-hover:shadow-md transition-shadow">
+<p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">Assalam-o-Alaikum, Beta! Maine dekha hai ke aapne Chapter 4 ke numericals mein thodi ghaltiyan ki hain. Kya aap chahte hain ke main unhe dubara samjhaon?</p>
+<span class="text-[9px] font-bold text-slate-400 absolute bottom-[-18px] left-0 uppercase">2:40 PM</span>
+</div>
+</div>
+</div>
+<div class="flex gap-4 max-w-[75%] self-end flex-row-reverse group">
+<div class="size-10 rounded-2xl bg-primary/10 text-primary flex-shrink-0 flex items-center justify-center self-end mb-1 overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ user.full_name }}"/>
+</div>
+<div>
+<div class="p-5 bg-primary rounded-2xl rounded-br-none shadow-lg shadow-primary/20 relative group-hover:shadow-primary/30 transition-shadow">
+<p class="text-sm leading-relaxed text-white">Walaikum Assalam Sir! Ji sir, mujhe molarity wale sawal mein thodi confusion ho rahi hai. Please guide kar dein.</p>
+<span class="text-[9px] font-bold text-slate-400 absolute bottom-[-18px] right-0 uppercase tracking-wider">2:45 PM • Read</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 py-4">
+<div class="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+<span class="text-[10px] font-black text-slate-400 uppercase tracking-[3px]">New Messages</span>
+<div class="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+</div>
+<div class="flex gap-4">
+<div class="size-10 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+<span class="material-symbols-outlined">school</span>
+</div>
+<div class="bg-white dark:bg-slate-900 px-6 py-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-2">
+<div class="size-1.5 bg-primary/40 rounded-full animate-bounce"></div>
+<div class="size-1.5 bg-primary/60 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+<div class="size-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.4s]"></div>
+</div>
+</div>
+</div>
+<div class="p-8">
+<div class="max-w-4xl mx-auto relative group">
+<div class="flex items-end gap-3 p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary">
+<button class="mb-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<textarea class="flex-1 py-3 bg-transparent border-none focus:ring-0 text-sm resize-none custom-scrollbar min-h-[48px] max-h-32 text-slate-800 dark:text-slate-100" placeholder="Write your message here..." rows="1"></textarea>
+<div class="flex items-center gap-2 mb-1.5 px-2">
+<button class="p-2 text-slate-400 hover:text-slate-600 transition-colors">
+<span class="material-symbols-outlined text-xl">sentiment_satisfied</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-slate-600 transition-colors">
+<span class="material-symbols-outlined text-xl">attach_file</span>
+</button>
+<button class="ml-2 size-11 flex items-center justify-center bg-primary text-white rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-center gap-6">
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-[14px]">info</span>
+Messages are encrypted &amp; secure
+</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<script>
+    // Simple script to adjust textarea height
+    const tx = document.getElementsByTagName("textarea");
+    for (let i = 0; i < tx.length; i++) {
+        tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+        tx[i].addEventListener("input", OnInput, false);
+    }
+    function OnInput() {
+        this.style.height = "auto";
+        this.style.height = (this.scrollHeight) + "px";
+    }
+</script>
+</body></html>
+

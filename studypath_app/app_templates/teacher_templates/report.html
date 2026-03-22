@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Global Teacher Analytics Command Center - StudyPath Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#10b981",
+                        "background-light": "#f9fafb",
+                        "background-dark": "#0f172a",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "body": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply font-body bg-background-light dark:bg-slate-950 text-slate-600 dark:text-slate-300;
+            }
+            h1, h2, h3, h4, h5, h6 {
+                @apply font-display text-slate-900 dark:text-white;
+            }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            @apply bg-slate-200 dark:bg-slate-700 rounded-full;
+        }
+        .stat-card-gradient {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0) 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex">
+<aside class="w-[260px] h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed left-0 top-0 z-50">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-2xl">auto_stories</span>
+</div>
+<div>
+<h1 class="font-display font-bold text-lg leading-tight text-slate-900 dark:text-white">StudyPath Pro</h1>
+<p class="text-[10px] uppercase tracking-wider font-bold text-primary/80">Sindh Board Edition</p>
+</div>
+</div>
+<nav class="flex-1 px-4 mt-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_dashboard' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_dashboard') }}">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-display text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_classrooms' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_classrooms') }}">
+<span class="material-symbols-outlined">school</span>
+<span class="font-display text-sm">Classrooms</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_curriculum' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_curriculum') }}">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-display text-sm">Curriculum</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition-colors" a href="{{ url_for('teacher_report') }}">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-display text-sm">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition-colors" a href="{{ url_for('teacher_profile') }}">
+<span class="material-symbols-outlined">person</span>
+<span class="font-display text-sm">Profile</span>
+</a>
+</nav>
+<div class="p-6 mt-auto">
+<div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary overflow-hidden">
+<img alt="Teacher profile avatar" class="w-full h-full object-cover" src="{{ url_for('static', filename='images/teacher_avatar.png') }}"/>
+</div>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-slate-900 dark:text-white truncate">Sir Ahmed</p>
+<p class="text-[10px] text-slate-500 truncate">Senior Educator</p>
+</div>
+</div>
+</div>
+</aside>
+
+<main class="flex-1 ml-[260px] min-h-screen p-8 lg:p-10 bg-[#f8fafc] dark:bg-slate-950">
+<header class="flex items-center justify-between mb-10">
+<div>
+<h2 class="font-display text-3xl font-extrabold text-slate-900 dark:text-white uppercase tracking-tight">Global Command Center</h2>
+<p class="text-slate-500 mt-1 font-medium flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                Multi-Class Analytics • Academic Year 2024
+            </p>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg font-display text-sm font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-xl">file_download</span>
+                Export All Data
+            </button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+</div>
+</header>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+<div class="absolute right-[-10px] top-[-10px] text-primary/5 group-hover:text-primary/10 transition-colors">
+<span class="material-symbols-outlined text-8xl">groups</span>
+</div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Students Managed</p>
+<h4 class="text-3xl font-display font-extrabold text-slate-900 dark:text-white">1,482</h4>
+<div class="mt-4 flex items-center gap-2">
+<span class="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded">↑ 12%</span>
+<span class="text-[10px] text-slate-400">vs last month</span>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+<div class="absolute right-[-10px] top-[-10px] text-blue-500/5 group-hover:text-blue-500/10 transition-colors">
+<span class="material-symbols-outlined text-8xl">auto_stories</span>
+</div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Global Syllabus Progress</p>
+<h4 class="text-3xl font-display font-extrabold text-slate-900 dark:text-white">68.4%</h4>
+<div class="mt-4 w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full">
+<div class="h-full bg-blue-500 rounded-full" style="width: 68.4%"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+<div class="absolute right-[-10px] top-[-10px] text-orange-500/5 group-hover:text-orange-500/10 transition-colors">
+<span class="material-symbols-outlined text-8xl">quiz</span>
+</div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Quizzes</p>
+<h4 class="text-3xl font-display font-extrabold text-slate-900 dark:text-white">24</h4>
+<div class="mt-4 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-orange-500"></span>
+<span class="text-[10px] font-bold text-orange-500 uppercase">8 closing today</span>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+<div class="absolute right-[-10px] top-[-10px] text-primary/5 group-hover:text-primary/10 transition-colors">
+<span class="material-symbols-outlined text-8xl">favorite</span>
+</div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Overall Class Health</p>
+<h4 class="text-3xl font-display font-extrabold text-primary">A-</h4>
+<div class="mt-4 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-primary fill-1">star</span>
+<span class="text-[10px] font-bold text-slate-500">Excellent Academic Standing</span>
+</div>
+</div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+<div class="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="text-lg font-bold">Class Comparison Analysis</h3>
+<p class="text-xs text-slate-500">Comparing Average Score & Progress by Subject</p>
+</div>
+<div class="flex items-center gap-4 text-[10px] font-bold">
+<div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-primary"></span> AVG SCORE</div>
+<div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-slate-300 dark:bg-slate-700"></span> PROGRESS</div>
+</div>
+</div>
+<div class="space-y-6">
+<div class="grid grid-cols-[120px_1fr] items-center gap-4">
+<span class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">10th Physics</span>
+<div class="flex flex-col gap-1.5">
+<div class="h-6 bg-primary/20 rounded-r flex items-center pr-2" style="width: 82%">
+<div class="h-full bg-primary rounded-r transition-all" style="width: 100%"></div>
+<span class="ml-2 text-[10px] font-bold">82%</span>
+</div>
+<div class="h-6 bg-slate-100 dark:bg-slate-800 rounded-r flex items-center pr-2" style="width: 75%">
+<div class="h-full bg-slate-300 dark:bg-slate-700 rounded-r transition-all" style="width: 100%"></div>
+<span class="ml-2 text-[10px] font-bold">75%</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-[120px_1fr] items-center gap-4">
+<span class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">9th Chemistry</span>
+<div class="flex flex-col gap-1.5">
+<div class="h-6 bg-primary/20 rounded-r flex items-center pr-2" style="width: 74%">
+<div class="h-full bg-primary rounded-r transition-all" style="width: 100%"></div>
+<span class="ml-2 text-[10px] font-bold">74%</span>
+</div>
+<div class="h-6 bg-slate-100 dark:bg-slate-800 rounded-r flex items-center pr-2" style="width: 90%">
+<div class="h-full bg-slate-300 dark:bg-slate-700 rounded-r transition-all" style="width: 100%"></div>
+<span class="ml-2 text-[10px] font-bold">90%</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-[120px_1fr] items-center gap-4">
+<span class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">12th Biology</span>
+<div class="flex flex-col gap-1.5">
+<div class="h-6 bg-primary/20 rounded-r flex items-center pr-2" style="width: 65%">
+<div class="h-full bg-primary rounded-r transition-all" style="width: 100%"></div>
+<span class="ml-2 text-[10px] font-bold">65%</span>
+</div>
+<div class="h-6 bg-slate-100 dark:bg-slate-800 rounded-r flex items-center pr-2" style="width: 45%">
+<div class="h-full bg-slate-300 dark:bg-slate-700 rounded-r transition-all" style="width: 100%"></div>
+<span class="ml-2 text-[10px] font-bold">45%</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-[120px_1fr] items-center gap-4">
+<span class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">11th Maths</span>
+<div class="flex flex-col gap-1.5">
+<div class="h-6 bg-primary/20 rounded-r flex items-center pr-2" style="width: 88%">
+<div class="h-full bg-primary rounded-r transition-all" style="width: 100%"></div>
+<span class="ml-2 text-[10px] font-bold">88%</span>
+</div>
+<div class="h-6 bg-slate-100 dark:bg-slate-800 rounded-r flex items-center pr-2" style="width: 60%">
+<div class="h-full bg-slate-300 dark:bg-slate-700 rounded-r transition-all" style="width: 100%"></div>
+<span class="ml-2 text-[10px] font-bold">60%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="bg-primary dark:bg-slate-900 p-6 rounded-2xl border border-primary/20 shadow-lg text-white">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-white">psychology</span>
+<h3 class="text-lg font-bold text-white uppercase tracking-tight">Sir Ahmed's Trends</h3>
+</div>
+<p class="text-[10px] font-bold text-white/60 uppercase tracking-widest mb-4">Most Struggling Topics (Cross-Subject)</p>
+<div class="space-y-4">
+<div class="bg-white/10 p-4 rounded-xl border border-white/10">
+<div class="flex justify-between items-start mb-2">
+<h5 class="text-sm font-bold">Chemical Bonding</h5>
+<span class="text-xs font-bold bg-red-500 px-2 py-0.5 rounded">60% Struggling</span>
+</div>
+<p class="text-xs text-white/70 leading-relaxed">High error rate in 'Ionic vs Covalent' visualization across all 9th Grade sections.</p>
+</div>
+<div class="bg-white/10 p-4 rounded-xl border border-white/10">
+<div class="flex justify-between items-start mb-2">
+<h5 class="text-sm font-bold">Electromagnetic Induction</h5>
+<span class="text-xs font-bold bg-orange-500 px-2 py-0.5 rounded">42% Struggling</span>
+</div>
+<p class="text-xs text-white/70 leading-relaxed">Students are consistently failing Lenz's Law numerical problems in 12th Physics.</p>
+</div>
+<div class="bg-white/10 p-4 rounded-xl border border-white/10">
+<div class="flex justify-between items-start mb-2">
+<h5 class="text-sm font-bold">Calculus: Integration</h5>
+<span class="text-xs font-bold bg-orange-500 px-2 py-0.5 rounded">38% Struggling</span>
+</div>
+<p class="text-xs text-white/70 leading-relaxed">Complex substitution methods identified as a bottleneck for Section B students.</p>
+</div>
+</div>
+<button class="w-full mt-6 py-3 bg-white text-primary text-xs font-bold rounded-lg uppercase tracking-widest hover:bg-slate-50 transition-all">
+                Plan Revision Blitz
+            </button>
+</div>
+</div>
+
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-8">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="text-lg font-bold">Weekly Global Performance</h3>
+<p class="text-xs text-slate-500">Fluctuation of average scores across all subjects</p>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 text-[10px] font-bold border border-slate-200 dark:border-slate-700 rounded-lg">LAST 7 DAYS</button>
+<button class="px-3 py-1.5 text-[10px] font-bold bg-primary text-white rounded-lg">LAST 30 DAYS</button>
+</div>
+</div>
+<div class="h-[200px] w-full flex items-end justify-between gap-4 px-4">
+<div class="flex-1 group relative flex flex-col items-center">
+<div class="w-2 bg-primary/20 rounded-full h-[60%] relative">
+<div class="absolute -top-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rounded-full border-2 border-white dark:border-slate-900"></div>
+</div>
+<span class="mt-4 text-[10px] font-bold text-slate-400 uppercase">W1</span>
+</div>
+<div class="flex-1 group relative flex flex-col items-center">
+<div class="w-2 bg-primary/20 rounded-full h-[75%] relative">
+<div class="absolute -top-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rounded-full border-2 border-white dark:border-slate-900"></div>
+</div>
+<span class="mt-4 text-[10px] font-bold text-slate-400 uppercase">W2</span>
+</div>
+<div class="flex-1 group relative flex flex-col items-center">
+<div class="w-2 bg-primary/20 rounded-full h-[65%] relative">
+<div class="absolute -top-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rounded-full border-2 border-white dark:border-slate-900"></div>
+</div>
+<span class="mt-4 text-[10px] font-bold text-slate-400 uppercase">W3</span>
+</div>
+<div class="flex-1 group relative flex flex-col items-center">
+<div class="w-2 bg-primary/20 rounded-full h-[85%] relative">
+<div class="absolute -top-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rounded-full border-2 border-white dark:border-slate-900"></div>
+</div>
+<span class="mt-4 text-[10px] font-bold text-slate-400 uppercase">W4</span>
+</div>
+<div class="flex-1 group relative flex flex-col items-center">
+<div class="w-2 bg-primary/20 rounded-full h-[80%] relative">
+<div class="absolute -top-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rounded-full border-2 border-white dark:border-slate-900"></div>
+</div>
+<span class="mt-4 text-[10px] font-bold text-slate-400 uppercase">W5</span>
+</div>
+<div class="flex-1 group relative flex flex-col items-center">
+<div class="w-2 bg-primary/20 rounded-full h-[92%] relative">
+<div class="absolute -top-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rounded-full border-2 border-white dark:border-slate-900"></div>
+</div>
+<span class="mt-4 text-[10px] font-bold text-slate-400 uppercase">W6</span>
+</div>
+</div>
+</div>
+
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-12">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h3 class="text-lg font-bold">Master Student Performance List</h3>
+<p class="text-xs text-slate-500">Real-time ranking across all managed sections</p>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto">
+<div class="relative flex-1 md:w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search student name..." type="text"/>
+</div>
+<select class="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-xs font-bold py-2 px-4 focus:ring-2 focus:ring-primary/20 transition-all">
+<option>All Classes</option>
+<option>10th Physics</option>
+<option>9th Chemistry</option>
+</select>
+<button class="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900">
+<th class="px-6 py-4">Student Name</th>
+<th class="px-6 py-4">Class / Section</th>
+<th class="px-6 py-4">Latest Score</th>
+<th class="px-6 py-4">Rank</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img alt="Student" class="w-full h-full object-cover" src="https://ui-avatars.com/api/?name=Arsalan+Khan&background=10b981&color=fff"/>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Arsalan Khan</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-medium px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400 uppercase">10th Physics - A</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm font-bold text-primary">98%</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-bold">#1 Global</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded text-[10px] font-bold uppercase tracking-tight">Top Tier</span>
+</td>
+<td class="px-6 py-4">
+<button class="text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img alt="Student" class="w-full h-full object-cover" src="https://ui-avatars.com/api/?name=Fatima+Zahra&background=10b981&color=fff"/>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Fatima Zahra</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-medium px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400 uppercase">9th Chemistry - C</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm font-bold text-primary">92%</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-bold">#12 Global</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded text-[10px] font-bold uppercase tracking-tight">Top Tier</span>
+</td>
+<td class="px-6 py-4">
+<button class="text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img alt="Student" class="w-full h-full object-cover" src="https://ui-avatars.com/api/?name=Bilal+Ahmed&background=ef4444&color=fff"/>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Bilal Ahmed</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-medium px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400 uppercase">10th Physics - B</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm font-bold text-orange-500">45%</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-bold">#1402 Global</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded text-[10px] font-bold uppercase tracking-tight">At Risk</span>
+</td>
+<td class="px-6 py-4">
+<button class="text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img alt="Student" class="w-full h-full object-cover" src="https://ui-avatars.com/api/?name=Zoya+Malik&background=3b82f6&color=fff"/>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Zoya Malik</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-medium px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400 uppercase">12th Biology - A</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-sm font-bold text-primary">78%</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-bold">#245 Global</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded text-[10px] font-bold uppercase tracking-tight">Steady</span>
+</td>
+<td class="px-6 py-4">
+<button class="text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">visibility</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Showing 4 of 1,482 Students</span>
+<div class="flex gap-2">
+<button class="p-2 border border-slate-200 dark:border-slate-800 rounded hover:bg-white transition-colors"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="p-2 border border-slate-200 dark:border-slate-800 rounded hover:bg-white transition-colors"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+</div>
+</main>
+</body></html>
+
+

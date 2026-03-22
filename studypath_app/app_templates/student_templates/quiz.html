@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>AI Quiz | StudyPath AI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2c13ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121022",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Lexend', sans-serif; background-color: #f6f6f8; }
+        .option-card:hover { border-color: #2c13ec; background-color: rgba(44, 19, 236, 0.05); }
+        .option-selected { border-color: #2c13ec; background-color: rgba(44, 19, 236, 0.1); border-width: 2px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <nav class="h-20 bg-white border-b px-8 flex items-center justify-between sticky top-0 z-50">
+        <div class="flex items-center gap-4">
+            <a href="{{ url_for('classroom_dashboard', subject=subject) }}" class="size-10 rounded-full border flex items-center justify-center hover:bg-slate-50 transition-all">
+                <span class="material-symbols-outlined text-slate-600">close</span>
+            </a>
+            <div>
+                <h2 class="font-bold text-slate-800">{{ subject }} Quiz</h2>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Topic: Fundamentals</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2 px-4 py-2 bg-amber-50 rounded-full border border-amber-100">
+                <span class="material-symbols-outlined text-amber-600 text-sm">schedule</span>
+                <span id="timer" class="text-sm font-black text-amber-700 tracking-tighter">15:00</span>
+            </div>
+            <div class="w-px h-6 bg-slate-200"></div>
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Progress</p>
+                    <p class="text-xs font-black text-slate-700">Question <span id="current-q">1</span>/10</p>
+                </div>
+                <div class="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-primary transition-all duration-500" style="width: 10%"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 flex gap-8 p-8 max-w-7xl mx-auto w-full">
+        
+        <div class="flex-1 space-y-8">
+            <div class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-primary"></div>
+                
+                <span class="inline-block px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase rounded-md mb-6 tracking-wider">Multiple Choice Question</span>
+                
+                <h3 id="question-text" class="text-2xl font-bold text-slate-800 leading-snug mb-8">
+                    Loading your question Beta...
+                </h3>
+
+                <div id="options-container" class="grid grid-cols-1 gap-4">
+                    </div>
+            </div>
+
+            <div class="flex items-center justify-between bg-white p-6 rounded-2xl border border-slate-200">
+                <button onclick="prevQuestion()" class="flex items-center gap-2 px-6 py-3 text-slate-500 font-bold hover:text-primary transition-all">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Previous
+                </button>
+                <div class="flex gap-2">
+                    <button class="px-6 py-3 text-slate-400 font-bold hover:text-slate-600 transition-all">Flag for Review</button>
+                    <button id="next-btn" onclick="nextQuestion()" class="flex items-center gap-2 px-8 py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+                        Save & Next
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <aside class="w-80 space-y-6">
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-[2px] mb-6">Question Palette</h4>
+                <div class="grid grid-cols-5 gap-3">
+                    <script>
+                        for(let i=1; i<=10; i++) {
+                            document.write(`<div id="pal-${i}" class="aspect-square rounded-lg border border-slate-100 flex items-center justify-center text-xs font-bold text-slate-400 cursor-pointer hover:border-primary transition-all">${i}</div>`);
+                        }
+                    </script>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-slate-50 space-y-3">
+                    <div class="flex items-center gap-3">
+                        <div class="size-3 rounded-full bg-primary"></div>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase">Answered</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="size-3 rounded-full bg-slate-100 border border-slate-200"></div>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase">Not Visited</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 p-6 rounded-3xl text-white relative overflow-hidden">
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="material-symbols-outlined text-primary text-[20px]">auto_awesome</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-primary">AI Coach Tip</span>
+                    </div>
+                    <p class="text-xs leading-relaxed text-slate-300 italic">"Read the options carefully, Beta! Elimination method helps in 70% of multiple choice questions."</p>
+                </div>
+                <div class="absolute -right-4 -bottom-4 size-24 bg-primary/20 rounded-full blur-2xl"></div>
+            </div>
+        </aside>
+
+    </main>
+
+    <script>
+        let currentIdx = 1;
+        const totalIdx = 10;
+        let timeLeft = 15 * 60; // 15 mins
+
+        // Timer Logic
+        setInterval(() => {
+            if(timeLeft <= 0) return;
+            timeLeft--;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            document.getElementById('timer').innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+        }, 1000);
+
+        // Dummy Question Data (In real app, fetch from backend)
+        const sampleQuestion = {
+            text: "Which of the following is considered the fundamental building block of matter in Chemistry?",
+            options: ["Molecule", "Atom", "Compound", "Mixture"]
+        };
+
+        function loadQuestion(idx) {
+            document.getElementById('current-q').innerText = idx;
+            document.getElementById('question-text').innerText = sampleQuestion.text;
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            sampleQuestion.options.forEach((opt, i) => {
+                const char = String.fromCharCode(65 + i);
+                container.innerHTML += `
+                    <div onclick="selectOption(this, ${idx})" class="option-card flex items-center gap-4 p-5 bg-slate-50 border border-slate-100 rounded-2xl cursor-pointer transition-all group">
+                        <div class="size-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-500 group-hover:text-primary group-hover:border-primary transition-all">${char}</div>
+                        <p class="text-sm font-semibold text-slate-700">${opt}</p>
+                    </div>
+                `;
+            });
+
+            // Update Progress Bar
+            document.getElementById('progress-bar').style.width = `${(idx/totalIdx)*100}%`;
+        }
+
+        function selectOption(el, idx) {
+            document.querySelectorAll('.option-card').forEach(card => card.classList.remove('option-selected'));
+            el.classList.add('option-selected');
+            document.getElementById(`pal-${idx}`).classList.remove('border-slate-100', 'text-slate-400');
+            document.getElementById(`pal-${idx}`).classList.add('bg-primary', 'text-white', 'border-primary');
+        }
+
+        function nextQuestion() {
+            if(currentIdx < totalIdx) {
+                currentIdx++;
+                loadQuestion(currentIdx);
+            } else {
+                // Submit Quiz
+                window.location.href = "{{ url_for('quiz_result', subject=subject) }}";
+            }
+        }
+
+        function prevQuestion() {
+            if(currentIdx > 1) {
+                currentIdx--;
+                loadQuestion(currentIdx);
+            }
+        }
+
+        // Initialize first question
+        loadQuestion(1);
+    </script>
+
+</body>
+</html>
+

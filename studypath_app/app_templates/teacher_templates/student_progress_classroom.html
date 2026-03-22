@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Student Progress - 10th Physics | StudyPath Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#10b981",
+                        "background-light": "#f9fafb",
+                        "background-dark": "#10221c",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "body": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .font-display { font-family: 'Lexend', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .active-tab { @apply border-primary text-primary border-b-2; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { @apply bg-slate-200 dark:bg-slate-700 rounded-full; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex">
+<aside class="w-[260px] h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed left-0 top-0 z-50">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-2xl">auto_stories</span>
+</div>
+<div>
+<h1 class="font-display font-bold text-lg leading-tight text-slate-900 dark:text-white">StudyPath Pro</h1>
+<p class="text-[10px] uppercase tracking-wider font-bold text-primary/80">Sindh Board Edition</p>
+</div>
+</div>
+<nav class="flex-1 px-4 mt-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_dashboard' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_dashboard') }}">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-display text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_classrooms' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_classrooms') }}">
+<span class="material-symbols-outlined">school</span>
+<span class="font-display text-sm">Classrooms</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_curriculum' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_curriculum') }}">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-display text-sm">Curriculum</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition-colors" a href="{{ url_for('teacher_report') }}">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-display text-sm">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition-colors" a href="{{ url_for('teacher_profile') }}">
+<span class="material-symbols-outlined">person</span>
+<span class="font-display text-sm">Profile</span>
+</a>
+</nav>
+<div class="p-6 mt-auto">
+<div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary overflow-hidden">
+<img alt="Teacher profile avatar" class="w-full h-full object-cover" src="{{ url_for('static', filename='images/teacher_avatar.png') }}"/>
+</div>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-slate-900 dark:text-white truncate">Sir Ahmed</p>
+<p class="text-[10px] text-slate-500 truncate">Senior Educator</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 ml-[260px] min-h-screen flex flex-col">
+<header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 py-6">
+<div class="flex items-center gap-4 mb-2">
+<a href="{{ url_for('teacher_classrooms') }}" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors">
+<span class="material-symbols-outlined text-base">arrow_back</span>
+</a>
+<nav class="flex text-xs font-medium text-slate-400 gap-2 items-center">
+<a href="{{ url_for('teacher_classrooms') }}" class="hover:text-primary">Classrooms</a>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-primary">10th Class Physics - Section A</span>
+</nav>
+</div>
+<div class="flex justify-between items-center">
+<h2 class="font-display text-2xl font-bold text-slate-900 dark:text-white">Student Progress Tracking</h2>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-sm">file_download</span> Export PDF
+                </button>
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-primary/90">
+<span class="material-symbols-outlined text-sm">mail</span> Message Class
+                </button>
+</div>
+</div>
+</header>
+<div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8">
+<div class="flex gap-8">
+<a href="{{ url_for('teacher_roadmap') }}" class="py-4 text-sm font-semibold {{ 'active-tab' if active_page == 'teacher_roadmap' else 'text-slate-500 hover:text-slate-700 border-b-2 border-transparent' }} transition-all">AI Roadmap</a>
+<a href="{{ url_for('teacher_student_progress') }}" class="py-4 text-sm font-semibold {{ 'active-tab' if active_page == 'teacher_student_progress' else 'text-slate-500 hover:text-slate-700 border-b-2 border-transparent' }} transition-all">Student Progress</a>
+<a href="{{ url_for('teacher_knowledge_dashboard') }}" class="py-4 text-sm font-semibold {{ 'active-tab' if active_page == 'teacher_knowledge_dashboard' else 'text-slate-500 hover:text-slate-700 border-b-2 border-transparent' }} transition-all">Knowledge Base</a>
+<a href="{{ url_for('teacher_quiz_factory') }}" class="py-4 text-sm font-semibold {{ 'active-tab' if active_page == 'teacher_quiz_factory' else 'text-slate-500 hover:text-slate-700 border-b-2 border-transparent' }} transition-all">Quiz Factory</a>
+</div>
+</div>
+<div class="p-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Average Class Score</p>
+<div class="flex items-baseline gap-2">
+<h4 class="text-3xl font-display font-extrabold text-slate-900 dark:text-white">78.4%</h4>
+<span class="text-xs font-bold text-emerald-500">+2.1%</span>
+</div>
+<div class="mt-4 w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 78.4%"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Attendance Rate</p>
+<div class="flex items-baseline gap-2">
+<h4 class="text-3xl font-display font-extrabold text-slate-900 dark:text-white">92.0%</h4>
+<span class="text-xs font-bold text-slate-400">Target: 95%</span>
+</div>
+<div class="mt-4 w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 rounded-full" style="width: 92%"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Assignment Completion</p>
+<div class="flex items-baseline gap-2">
+<h4 class="text-3xl font-display font-extrabold text-slate-900 dark:text-white">65/420</h4>
+<span class="text-xs font-bold text-red-500">Pending tasks</span>
+</div>
+<div class="mt-4 w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-orange-500 rounded-full" style="width: 65%"></div>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+<h3 class="font-display text-lg font-bold text-slate-900 dark:text-white">Individual Performance</h3>
+<div class="flex gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-sm w-64 focus:ring-2 focus:ring-primary/20" placeholder="Search student..." type="text"/>
+</div>
+<button class="p-2 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+<th class="px-6 py-4">Student</th>
+<th class="px-6 py-4">Overall Grade</th>
+<th class="px-6 py-4">Progress</th>
+<th class="px-6 py-4">Last Active</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img alt="Student" src="https://ui-avatars.com/api/?name=Arsalan+Khan&background=10b981&color=fff"/>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-white">Arsalan Khan</p>
+<p class="text-[10px] text-slate-500">arsalan@school.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-bold text-primary">A (94%)</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full max-w-[120px]">
+<div class="h-full bg-primary rounded-full" style="width: 85%"></div>
+</div>
+<span class="text-xs font-bold text-slate-500">85%</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-500">12 mins ago</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400">
+<span class="w-1 h-1 rounded-full bg-emerald-500"></span> Active Now
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-400">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img alt="Student" src="https://ui-avatars.com/api/?name=Zoya+Malik&background=3b82f6&color=fff"/>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-white">Zoya Malik</p>
+<p class="text-[10px] text-slate-500">zoya.m@school.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-bold text-slate-900 dark:text-white">B+ (88%)</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full max-w-[120px]">
+<div class="h-full bg-primary rounded-full" style="width: 72%"></div>
+</div>
+<span class="text-xs font-bold text-slate-500">72%</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-500">Yesterday</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+<span class="w-1 h-1 rounded-full bg-slate-400"></span> Offline
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-400">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img alt="Student" src="https://ui-avatars.com/api/?name=Bilal+Ahmed&background=ef4444&color=fff"/>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-white">Bilal Ahmed</p>
+<p class="text-[10px] text-slate-500">bilal.a@school.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-bold text-red-500">D (52%)</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full max-w-[120px]">
+<div class="h-full bg-red-500 rounded-full" style="width: 38%"></div>
+</div>
+<span class="text-xs font-bold text-slate-500">38%</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-500">4 days ago</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400">
+<span class="w-1 h-1 rounded-full bg-red-500"></span> Needs Review
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-400">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+<img alt="Student" src="https://ui-avatars.com/api/?name=Fatima+Noor&background=10b981&color=fff"/>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-white">Fatima Noor</p>
+<p class="text-[10px] text-slate-500">fatima.n@school.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-bold text-primary">A- (90%)</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full max-w-[120px]">
+<div class="h-full bg-primary rounded-full" style="width: 79%"></div>
+</div>
+<span class="text-xs font-bold text-slate-500">79%</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-500">2 hours ago</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400">
+<span class="w-1 h-1 rounded-full bg-amber-500"></span> Consistent
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-400">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 flex justify-between items-center">
+<span class="text-xs font-medium text-slate-400">Showing 4 of 42 students</span>
+<div class="flex gap-2">
+<button class="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-xs font-bold text-slate-400 cursor-not-allowed">Prev</button>
+<button class="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors">Next</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
+
+
