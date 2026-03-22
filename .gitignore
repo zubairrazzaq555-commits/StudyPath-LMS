@@ -13,6 +13,11 @@ env/
 # Database (local data)
 *.db
 *.sqlite3
+*.db.bak
+
+# Large data files
+StudyPath_backend/data/
+StudyPath_backend/instance/
 
 # Environment variables
 .env
