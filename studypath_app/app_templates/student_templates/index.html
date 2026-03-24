@@ -1,160 +1,140 @@
 <!DOCTYPE html>
-<html class="light" lang="en"><head>
+<html class="light" lang="en">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>StudyPath Pro - Student Dashboard</title>
+<title>StudyPath - Student Dashboard</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#3713ec",
-                        "background-light": "#f9fafb",
-                        "background-dark": "#10221c",
-                    },
-                    fontFamily: {
-                        "display": ["Lexend", "sans-serif"],
-                        "body": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#3713ec",
+                    "background-light": "#f9fafb",
+                },
+                fontFamily: {
+                    "display": ["Lexend", "sans-serif"],
+                    "body": ["Inter", "sans-serif"]
                 },
             },
-        }
-    </script>
+        },
+    }
+</script>
 <style type="text/tailwindcss">
-        body { font-family: 'Inter', sans-serif; }
-        .font-display { font-family: 'Lexend', sans-serif; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .sidebar-item-active { 
-            background-color: rgba(55, 19, 236, 0.1); 
-            color: #3713ec; 
-            border-right: 4px solid #3713ec; 
-        }
-    </style>
+    body { font-family: 'Inter', sans-serif; }
+    .sidebar-item-active {
+        background-color: rgba(55, 19, 236, 0.1);
+        color: #3713ec;
+        border-right: 4px solid #3713ec;
+    }
+</style>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex">
+<body class="bg-background-light text-slate-900 min-h-screen flex">
+
+<!-- Sidebar -->
 <aside class="w-[260px] bg-white border-r border-slate-200 fixed h-full z-50">
-<div class="p-8">
-<div class="flex items-center gap-2 mb-10">
-<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-<span class="material-symbols-outlined text-white text-xl">auto_awesome</span>
-</div>
-<h1 class="text-xl font-bold tracking-tight">StudyPath AI</h1>
-</div>
-<nav class="space-y-2">
-<a href="{{ url_for('student_index') }}" class="{% if active_page == 'student_index' %}sidebar-item-active{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
-<span class="material-symbols-outlined">dashboard</span>
-Classroom
-</a>
-<a href="{{ url_for('analysis') }}" class="{% if active_page == 'analysis' %}sidebar-item-active{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
-<span class="material-symbols-outlined">analytics</span>
-Analysis
-</a>
-<a href="{{ url_for('inbox') }}" class="{% if active_page == 'inbox' %}sidebar-item-active{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
-<span class="material-symbols-outlined">mail</span>
-Inbox
-</a>
-<a href="{{ url_for('profile') }}" class="{% if active_page == 'profile' %}sidebar-item-active{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
-<span class="material-symbols-outlined">person</span>
-Profile
-</a>
-</nav>
-</div>
+    <div class="p-8">
+        <div class="flex items-center gap-2 mb-10">
+            <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <span class="material-symbols-outlined text-white text-xl">auto_awesome</span>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight">StudyPath</h1>
+        </div>
+        <nav class="space-y-2">
+            <a href="{{ url_for('student_index') }}" class="{% if active_page == 'student_index' %}sidebar-item-active{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
+                <span class="material-symbols-outlined">dashboard</span>
+                Classroom
+            </a>
+            <a href="{{ url_for('analysis') }}" class="{% if active_page == 'analysis' %}sidebar-item-active{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
+                <span class="material-symbols-outlined">analytics</span>
+                Analysis
+            </a>
+            <a href="{{ url_for('inbox') }}" class="{% if active_page == 'inbox' %}sidebar-item-active{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
+                <span class="material-symbols-outlined">mail</span>
+                Inbox
+            </a>
+            <a href="{{ url_for('profile') }}" class="{% if active_page == 'profile' %}sidebar-item-active{% else %}text-slate-500 hover:text-primary hover:bg-slate-50{% endif %} flex items-center gap-3 px-4 py-3 rounded-l-lg font-medium transition-all">
+                <span class="material-symbols-outlined">person</span>
+                Profile
+            </a>
+        </nav>
+    </div>
 </aside>
+
+<!-- Main -->
 <main class="flex-1 ml-[260px] min-h-screen p-8 lg:p-12">
-<header class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
-<div>
-<h2 class="font-display text-3xl font-bold text-slate-900 dark:text-white">Welcome back, {{ user.full_name }}!</h2>
-<p class="text-slate-500 mt-1">Here's your learning progress today.</p>
-</div>
-<div class="flex items-center gap-3 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="flex flex-col items-end text-right">
-<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Current Session</p>
-<p class="text-sm font-bold text-slate-900 dark:text-white">2024 - 2025</p>
-</div>
-<div class="w-px h-8 bg-slate-200 dark:border-slate-800 mx-2"></div>
-<span class="material-symbols-outlined text-primary">calendar_today</span>
-</div>
-</header>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-primary/10 p-2 rounded-lg text-primary"><span class="material-symbols-outlined">menu_book</span></div>
-<span class="text-emerald-500 text-xs font-bold flex items-center">+5 <span class="material-symbols-outlined text-sm ml-0.5">trending_up</span></span>
-</div>
-<p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Active Subjects</p>
-<h3 class="font-display text-2xl font-bold text-slate-900 dark:text-white">{{ books|length }}</h3>
-</div>
-<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-blue-500/10 p-2 rounded-lg text-blue-500"><span class="material-symbols-outlined">quiz</span></div>
-<span class="text-amber-500 text-xs font-bold flex items-center">68% <span class="material-symbols-outlined text-sm ml-0.5">trending_up</span></span>
-</div>
-<p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Avg. Quiz Score</p>
-<h3 class="font-display text-2xl font-bold text-slate-900 dark:text-white">68/100</h3>
-</div>
-<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-amber-500/10 p-2 rounded-lg text-amber-500"><span class="material-symbols-outlined">hourglass_empty</span></div>
-<span class="text-emerald-500 text-xs font-bold flex items-center">12h <span class="material-symbols-outlined text-sm ml-0.5">schedule</span></span>
-</div>
-<p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Study Time</p>
-<h3 class="font-display text-2xl font-bold text-slate-900 dark:text-white">42h</h3>
-</div>
-<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-purple-500/10 p-2 rounded-lg text-purple-500"><span class="material-symbols-outlined">bolt</span></div>
-<span class="text-emerald-500 text-xs font-bold flex items-center">Active <span class="material-symbols-outlined text-sm ml-0.5">offline_bolt</span></span>
-</div>
-<p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">AI Sessions</p>
-<h3 class="font-display text-2xl font-bold text-slate-900 dark:text-white">28</h3>
-</div>
-</div>
-<div class="mb-6 flex items-center justify-between">
-<h3 class="font-display text-xl font-bold text-slate-900 dark:text-white">Your Subjects</h3>
-<a href="{{ url_for('classroom_dashboard', subject=books[0] if books else 'Physics') }}" class="text-primary text-sm font-bold flex items-center gap-1 hover:underline">View all <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-{% for subject in books %}
-<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:border-primary/50 transition-all flex flex-col">
-<div class="p-6 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-primary/10 p-3 rounded-xl text-primary"><span class="material-symbols-outlined">menu_book</span></div>
-<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 uppercase tracking-wider">Grade {{ user.grade }}</span>
-</div>
-<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white mb-1">{{ subject }}</h4>
-<p class="text-sm text-slate-500 flex items-center gap-2 mb-6">
-<span class="material-symbols-outlined text-base text-slate-400">chapter</span> 8 Chapters
-</p>
-<div class="space-y-2">
-<div class="flex justify-between text-xs font-semibold">
-<span class="text-slate-500">Progress</span>
-<span class="text-primary">45%</span>
-</div>
-<div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 45%"></div>
-</div>
-</div>
-</div>
-<div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
-<span class="text-xs text-slate-400 font-medium italic">Last studied: 2d ago</span>
-<a href="{{ url_for('classroom_dashboard', subject=subject) }}" class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-display text-sm font-bold transition-all shadow-sm flex items-center gap-2">
-Continue <span class="material-symbols-outlined text-sm">arrow_forward</span>
-</a>
-</div>
-</div>
-{% endfor %}
-</div>
+
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+        <div>
+            <h2 class="font-display text-3xl font-bold text-slate-900">Welcome back, {{ user.full_name }}!</h2>
+            <p class="text-slate-500 mt-1">
+                {{ user.class_year or 'Class not set' }} •
+                Section {{ user.section or 'N/A' }} •
+                {{ user.college_id or 'College not set' }}
+            </p>
+        </div>
+        <a href="{{ url_for('logout') }}" class="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-bold hover:bg-red-600 hover:text-white transition-all">
+            <span class="material-symbols-outlined text-sm">logout</span>
+            Logout
+        </a>
+    </header>
+
+    <!-- Stats: only real data -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="bg-primary/10 p-2 rounded-lg text-primary w-fit mb-4">
+                <span class="material-symbols-outlined">menu_book</span>
+            </div>
+            <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Enrolled Classrooms</p>
+            <h3 class="font-display text-2xl font-bold text-slate-900">{{ classrooms|length }}</h3>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="bg-blue-500/10 p-2 rounded-lg text-blue-500 w-fit mb-4">
+                <span class="material-symbols-outlined">school</span>
+            </div>
+            <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Roll Number</p>
+            <h3 class="font-display text-2xl font-bold text-slate-900">{{ user.roll_number or 'Not Set' }}</h3>
+        </div>
+    </div>
+
+    <!-- Classrooms -->
+    <div class="mb-6">
+        <h3 class="font-display text-xl font-bold text-slate-900">Your Classrooms</h3>
+    </div>
+
+    {% if classrooms %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for classroom in classrooms %}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:border-primary/50 transition-all flex flex-col">
+            <div class="p-6 flex-1">
+                <div class="bg-primary/10 p-3 rounded-xl text-primary w-fit mb-4">
+                    <span class="material-symbols-outlined">menu_book</span>
+                </div>
+                <h4 class="font-display text-lg font-bold text-slate-900 mb-1">{{ classroom.subject }}</h4>
+                <p class="text-sm text-slate-500 mb-1">{{ classroom.class_year }} • Section {{ classroom.section }}</p>
+            </div>
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <a href="{{ url_for('classroom_dashboard', subject=classroom.subject) }}"
+                   class="px-5 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-display text-sm font-bold transition-all flex items-center gap-2">
+                    Open <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 text-center">
+        <span class="material-symbols-outlined text-5xl text-slate-300 mb-4 block">school</span>
+        <h4 class="font-display text-lg font-bold text-slate-500 mb-2">No classrooms yet</h4>
+        <p class="text-sm text-slate-400">Aapko kisi classroom mein enroll nahi kiya gaya. Teacher se rabta karein.</p>
+    </div>
+    {% endif %}
+
 </main>
-</body></html>
-
-
+</body>
+</html>

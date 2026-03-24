@@ -28,51 +28,77 @@ def load_user(user_id):
 # HELPER FUNCTION: AUTO-ENROLL STUDENT
 # ============================================
 def auto_enroll_student(student_id):
-    """
-    Jab student login kare, uski class/section/college se
-    matching classrooms dhundho aur enroll karo.
-
-    SQL (equivalent):
-        SELECT * FROM classrooms
-        WHERE class_year = student.class_year
-          AND section    = student.section
-          AND college_id = student.college_id;
-
-    NOTE (future): Agar 1000+ students ho to loop ki jagah
-    bulk insert use karna better hoga:
-        db.session.bulk_save_objects([...])
-    """
     student = User.query.get(student_id)
-    if not student or student.role != 'student':
+
+    # --- Guard checks ---
+    if not student:
+        print(f"[AUTO-ENROLL] ERROR: student_id={student_id} not found in DB")
+        return 0
+    if student.role != 'student':
+        print(f"[AUTO-ENROLL] SKIP: user {student_id} role='{student.role}' is not student")
         return 0
 
-    # Edge case: profile incomplete ho to enroll mat karo
+    print(f"[AUTO-ENROLL] Student -> id={student.id} | name='{student.full_name}'")
+    print(f"[AUTO-ENROLL]   class_year='{student.class_year}' | section='{student.section}' | college_id='{student.college_id}'")
+
+    # --- Profile completeness check ---
     if not all([student.class_year, student.section, student.college_id]):
+        print(f"[AUTO-ENROLL] SKIP: profile incomplete - missing class_year/section/college_id")
         return 0
 
-    # Step 1: Matching classrooms dhundho
-    matching_classrooms = Classroom.query.filter_by(
-        class_year=student.class_year,
-        section=student.section,
-        college_id=student.college_id
-    ).all()
+    # --- Normalize: strip + lowercase for case-insensitive match ---
+    # Root cause fix: SQLite filter_by is case-sensitive, so '1st year' != '1ST YEAR'
+    s_class_year = student.class_year.strip().lower()
+    s_section    = student.section.strip().lower()
+    s_college_id = student.college_id.strip().lower()
 
-    # Step 2: Har classroom ke liye enroll karo (duplicate skip)
+    print(f"[AUTO-ENROLL] Normalized -> class_year='{s_class_year}' | section='{s_section}' | college_id='{s_college_id}'")
+
+    # --- Fetch all classrooms, filter in Python to avoid SQLite case issues ---
+    all_classrooms = Classroom.query.all()
+    print(f"[AUTO-ENROLL] Total classrooms in DB: {len(all_classrooms)}")
+    for c in all_classrooms:
+        print(f"[AUTO-ENROLL]   DB classroom id={c.id} | class_year='{c.class_year}' | section='{c.section}' | college_id='{c.college_id}'")
+
+    matching_classrooms = [
+        c for c in all_classrooms
+        if c.class_year.strip().lower()  == s_class_year
+        and c.section.strip().lower()    == s_section
+        and c.college_id.strip().lower() == s_college_id
+    ]
+
+    print(f"[AUTO-ENROLL] Matching classrooms: {len(matching_classrooms)}")
+    if not matching_classrooms:
+        print(f"[AUTO-ENROLL] NO MATCH - verify teacher used same class_year/section/college_id values")
+        return 0
+
+    # --- Enroll, skip duplicates ---
     enrolled_count = 0
     for classroom in matching_classrooms:
+        print(f"[AUTO-ENROLL]   Checking classroom id={classroom.id} subject='{classroom.subject}'")
         already_enrolled = Enrollment.query.filter_by(
             student_id=student.id,
             classroom_id=classroom.id
         ).first()
 
-        if not already_enrolled:
+        if already_enrolled:
+            print(f"[AUTO-ENROLL]   SKIP (already enrolled): classroom_id={classroom.id}")
+        else:
             db.session.add(Enrollment(
                 student_id=student.id,
                 classroom_id=classroom.id
             ))
             enrolled_count += 1
+            print(f"[AUTO-ENROLL]   ENROLLED: student_id={student.id} -> classroom_id={classroom.id}")
 
-    db.session.commit()
+    try:
+        db.session.commit()
+        print(f"[AUTO-ENROLL] DONE: {enrolled_count} new enrollment(s) committed")
+    except Exception as e:
+        db.session.rollback()
+        print(f"[AUTO-ENROLL] DB COMMIT ERROR: {e}")
+        return 0
+
     return enrolled_count
 
 
@@ -94,11 +120,12 @@ def login():
         if user and user.password == password:
             login_user(user)
             if user.role == 'student':
+                print(f"[LOGIN] Student login: id={user.id} | email='{user.email}'")
                 enrolled_count = auto_enroll_student(user.id)
                 if enrolled_count > 0:
-                    flash(f'Logged in! {enrolled_count} new classrooms mein enroll ho gaye.', 'success')
+                    flash(f'Welcome! {enrolled_count} new classroom(s) mein enroll ho gaye.', 'success')
                 else:
-                    flash('Logged in! (Profile incomplete hone ki wajah se auto-enroll nahi hua)', 'warning')
+                    flash('Welcome back!', 'success')
                 return redirect(url_for('student_index'))
             else:
                 flash('Welcome back, Teacher!', 'success')
@@ -182,7 +209,8 @@ def teacher_report():
     if current_user.role != 'teacher':
         flash('Access denied. Teacher area only.', 'danger')
         return redirect(url_for('login'))
-    return render_template('teacher_templates/report.html', active_page='teacher_report', user=current_user)
+    classrooms = Classroom.query.filter_by(teacher_id=current_user.id).all()
+    return render_template('teacher_templates/report.html', classrooms=classrooms, active_page='teacher_report', user=current_user)
 
 
 @app.route('/teacher/profile')
@@ -231,43 +259,71 @@ def teacher_quiz_factory():
     return render_template('teacher_templates/quiz_classroom.html', active_page='teacher_quiz_factory', user=current_user)
 
 
-@app.route('/teacher/create-classroom', methods=['POST'])
+@app.route('/create-classroom', methods=['POST'])
 @login_required
 def create_classroom():
-    if current_user.role != 'teacher':
-        return jsonify({'error': 'Only teachers can create classrooms'}), 403
-    
-    data = request.form
-    classroom = Classroom(
-        teacher_id=current_user.id,
-        class_year=data.get('class_year'),
-        section=data.get('section'),
-        subject=data.get('subject'),
-        college_id=data.get('college_id')
-    )
-    
-    db.session.add(classroom)
-    db.session.commit()
-    
-    matching_students = User.query.filter_by(
-        role='student',
-        class_year=classroom.class_year,
-        section=classroom.section,
-        college_id=classroom.college_id
-    ).all()
-    
-    for student in matching_students:
-        # Duplicate check (agar student pehle se enrolled ho)
-        already_enrolled = Enrollment.query.filter_by(
-            student_id=student.id,
-            classroom_id=classroom.id
-        ).first()
-        if not already_enrolled:
-            db.session.add(Enrollment(student_id=student.id, classroom_id=classroom.id))
+    # DEBUG: Step 1 - user check
+    print(f"[CREATE-CLASSROOM] user: {current_user.id} | role: {current_user.role}")
 
-    db.session.commit()
-    flash(f'Classroom created! {len(matching_students)} students auto-enrolled.', 'success')
-    return redirect(url_for('teacher_dashboard'))
+    # 1. Sirf teacher hi classroom bana sakta hai
+    if current_user.role != 'teacher':
+        print(f"[CREATE-CLASSROOM] BLOCKED - not a teacher")
+        return jsonify({'error': 'Invalid data or unauthorized'}), 403
+
+    # DEBUG: Step 2 - request data check
+    json_data = request.get_json(silent=True)
+    form_data = request.form
+    print(f"[CREATE-CLASSROOM] JSON data: {json_data}")
+    print(f"[CREATE-CLASSROOM] Form data: {form_data.to_dict()}")
+
+    data = json_data or form_data
+
+    class_year = (data.get('class_year') or '').strip()
+    section    = (data.get('section')    or '').strip()
+    subject    = (data.get('subject')    or '').strip()
+    college_id = (data.get('college_id') or '').strip()
+
+    print(f"[CREATE-CLASSROOM] Parsed → class_year='{class_year}' section='{section}' subject='{subject}' college_id='{college_id}'")
+
+    # 2. Validation: koi field empty na ho
+    if not all([class_year, section, subject, college_id]):
+        print(f"[CREATE-CLASSROOM] VALIDATION FAILED - missing fields")
+        return jsonify({'error': 'All fields are required'}), 400
+
+    # 3. Classroom insert + students enroll (ek transaction mein)
+    try:
+        classroom = Classroom(
+            teacher_id=current_user.id,
+            class_year=class_year,
+            section=section,
+            subject=subject,
+            college_id=college_id
+        )
+        db.session.add(classroom)
+        db.session.commit()
+        print(f"[CREATE-CLASSROOM] Classroom saved → id: {classroom.id}")
+
+        # 4. Matching students: case-insensitive filter in Python
+        all_students = User.query.filter_by(role='student').all()
+        matching_students = [
+            s for s in all_students
+            if (s.class_year or '').strip().lower()  == class_year.lower()
+            and (s.section or '').strip().lower()    == section.lower()
+            and (s.college_id or '').strip().lower() == college_id.lower()
+        ]
+        print(f"[CREATE-CLASSROOM] Matching students found: {len(matching_students)}")
+        for s in matching_students:
+            print(f"[CREATE-CLASSROOM]   -> student id={s.id} name='{s.full_name}'")
+
+        for student in matching_students:
+            auto_enroll_student(student.id)
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"[CREATE-CLASSROOM] DB ERROR: {e}")
+        return jsonify({'error': 'Something went wrong'}), 500
+
+    return jsonify({'message': 'Classroom created successfully', 'classroom_id': classroom.id}), 201
 
 
 # ============================================
@@ -278,8 +334,12 @@ def create_classroom():
 def student_index():
     if current_user.role != 'student':
         return redirect(url_for('teacher_dashboard'))
-    enrollments = Enrollment.query.filter_by(student_id=current_user.id).all()
-    classrooms = [e.classroom for e in enrollments]
+    classrooms = (
+        db.session.query(Classroom)
+        .join(Enrollment, Enrollment.classroom_id == Classroom.id)
+        .filter(Enrollment.student_id == current_user.id)
+        .all()
+    )
     return render_template('student_templates/index.html', classrooms=classrooms, active_page='student_index', user=current_user)
 
 
@@ -288,7 +348,13 @@ def student_index():
 def analysis():
     if current_user.role != 'student':
         return redirect(url_for('teacher_dashboard'))
-    return render_template('student_templates/student_analysis.html', active_page='analysis', user=current_user)
+    classrooms = (
+        db.session.query(Classroom)
+        .join(Enrollment, Enrollment.classroom_id == Classroom.id)
+        .filter(Enrollment.student_id == current_user.id)
+        .all()
+    )
+    return render_template('student_templates/student_analysis.html', classrooms=classrooms, active_page='analysis', user=current_user)
 
 
 @app.route('/student/inbox')
@@ -374,18 +440,72 @@ def create_account():
 # ============================================
 # API ROUTES
 # ============================================
-@app.route('/api/my-classrooms')
+@app.route('/my-classrooms', methods=['GET'])
 @login_required
-def api_my_classrooms():
-    if current_user.role == 'teacher':
+def my_classrooms():
+    # Sirf student access kar sakta hai
+    if current_user.role != 'student':
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    try:
+        # SQL:
+        #   SELECT classrooms.id, subject, class_year, section, teacher_id
+        #   FROM enrollments
+        #   JOIN classrooms ON enrollments.classroom_id = classrooms.id
+        #   WHERE enrollments.student_id = ?
+        classrooms = (
+            db.session.query(Classroom)
+            .join(Enrollment, Enrollment.classroom_id == Classroom.id)
+            .filter(Enrollment.student_id == current_user.id)
+            .all()
+        )
+
+        result = [
+            {
+                'classroom_id': c.id,
+                'subject':      c.subject,
+                'class_year':   c.class_year,
+                'section':      c.section,
+                'teacher_id':   c.teacher_id,
+            }
+            for c in classrooms
+        ]
+
+        return jsonify(result), 200
+
+    except Exception:
+        return jsonify({'error': 'Something went wrong'}), 500
+
+
+@app.route('/teacher-classrooms', methods=['GET'])
+@login_required
+def teacher_classrooms_api():
+    # 1. Sirf teacher access kar sakta hai
+    if current_user.role != 'teacher':
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    try:
+        # 2. SQL:
+        #   SELECT id, subject, class_year, section
+        #   FROM classrooms
+        #   WHERE teacher_id = ?
         classrooms = Classroom.query.filter_by(teacher_id=current_user.id).all()
-    else:
-        enrollments = Enrollment.query.filter_by(student_id=current_user.id).all()
-        classrooms = [e.classroom for e in enrollments]
-    
-    return jsonify({
-        'classrooms': [{'id': c.id, 'subject': c.subject, 'class_year': c.class_year, 'section': c.section, 'college_id': c.college_id} for c in classrooms]
-    })
+
+        # 3. Koi classroom nahi to empty array
+        result = [
+            {
+                'classroom_id': c.id,
+                'subject':      c.subject,
+                'class_year':   c.class_year,
+                'section':      c.section,
+            }
+            for c in classrooms
+        ]
+
+        return jsonify(result), 200
+
+    except Exception:
+        return jsonify({'error': 'Something went wrong'}), 500
 
 
 # ============================================

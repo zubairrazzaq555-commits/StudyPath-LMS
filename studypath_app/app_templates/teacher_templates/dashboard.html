@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html class="light" lang="en"><head>
+<html class="light" lang="en">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>StudyPath Pro - Teacher Dashboard</title>
@@ -7,202 +8,196 @@
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#10b77f",
-                        "background-light": "#f9fafb",
-                        "background-dark": "#10221c",
-                    },
-                    fontFamily: {
-                        "display": ["Lexend", "sans-serif"],
-                        "body": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#10b981",
+                    "background-light": "#f9fafb",
+                    "background-dark": "#10221c",
+                },
+                fontFamily: {
+                    "display": ["Lexend", "sans-serif"],
+                    "body": ["Inter", "sans-serif"]
+                },
+                borderRadius: {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
                 },
             },
-        }
-    </script>
+        },
+    }
+</script>
 <style type="text/tailwindcss">
-        body { font-family: 'Inter', sans-serif; }
-        .font-display { font-family: 'Lexend', sans-serif; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    </style>
+    body { font-family: 'Inter', sans-serif; }
+    .font-display { font-family: 'Lexend', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+</style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex">
+
+<!-- ===== SIDEBAR ===== -->
 <aside class="w-[260px] h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed left-0 top-0 z-50">
-<div class="p-6 flex items-center gap-3">
-<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
-<span class="material-symbols-outlined text-2xl">auto_stories</span>
-</div>
-<div>
-<h1 class="font-display font-bold text-lg leading-tight text-slate-900 dark:text-white">StudyPath Pro</h1>
-<p class="text-[10px] uppercase tracking-wider font-bold text-primary/80">Sindh Board Edition</p>
-</div>
-</div>
-<nav class="flex-1 px-4 mt-4 space-y-1">
-<!-- FIXED: dashboard -> teacher_dashboard -->
-<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_dashboard' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_dashboard') }}">
-<span class="material-symbols-outlined">dashboard</span>
-<span class="font-display text-sm">Dashboard</span>
-</a>
-<!-- FIXED: classrooms -> teacher_classrooms -->
-<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_classrooms' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_classrooms') }}">
-<span class="material-symbols-outlined">school</span>
-<span class="font-display text-sm">Classrooms</span>
-</a>
-<!-- FIXED: curriculum -> teacher_curriculum -->
-<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_curriculum' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_curriculum') }}">
-<span class="material-symbols-outlined">menu_book</span>
-<span class="font-display text-sm">Curriculum</span>
-</a>
-<!-- FIXED: report -> teacher_report -->
-<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_report' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_report') }}">
-<span class="material-symbols-outlined">bar_chart</span>
-<span class="font-display text-sm">Reports</span>
-</a>
-<!-- FIXED: profile -> teacher_profile -->
-<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_profile' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_profile') }}">
-<span class="material-symbols-outlined">person</span>
-<span class="font-display text-sm">Profile</span>
-</a>
-</nav>
-<div class="p-6 mt-auto">
-<div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
-<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary overflow-hidden">
-<img alt="Teacher profile avatar" class="w-full h-full object-cover" src="{{ url_for('static', filename='images/teacher_avatar.png') }}"/>
-</div>
-<div class="overflow-hidden">
-<p class="text-xs font-bold text-slate-900 dark:text-white truncate">Sir Ahmed</p>
-<p class="text-[10px] text-slate-500 truncate">Senior Educator</p>
-</div>
-</div>
-</div>
+    <div class="p-6 flex items-center gap-3">
+        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+            <span class="material-symbols-outlined text-2xl">auto_stories</span>
+        </div>
+        <div>
+            <h1 class="font-display font-bold text-lg leading-tight text-slate-900 dark:text-white">StudyPath Pro</h1>
+            <p class="text-[10px] uppercase tracking-wider font-bold text-primary/80">Sindh Board Edition</p>
+        </div>
+    </div>
+    <nav class="flex-1 px-4 mt-4 space-y-1">
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_dashboard' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_dashboard') }}">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="font-display text-sm">Dashboard</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_classrooms' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_classrooms') }}">
+            <span class="material-symbols-outlined">school</span>
+            <span class="font-display text-sm">Classrooms</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_curriculum' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_curriculum') }}">
+            <span class="material-symbols-outlined">menu_book</span>
+            <span class="font-display text-sm">Curriculum</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_report' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_report') }}">
+            <span class="material-symbols-outlined">bar_chart</span>
+            <span class="font-display text-sm">Reports</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_profile' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_profile') }}">
+            <span class="material-symbols-outlined">person</span>
+            <span class="font-display text-sm">Profile</span>
+        </a>
+    </nav>
+    <!-- Sidebar footer: real user data -->
+    <div class="p-6 mt-auto">
+        <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+            <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm">
+                {{ user.full_name[0].upper() if user.full_name else 'T' }}
+            </div>
+            <div class="overflow-hidden">
+                <p class="text-xs font-bold text-slate-900 dark:text-white truncate">{{ user.full_name or 'Teacher' }}</p>
+                <p class="text-[10px] text-slate-500 truncate">Educator</p>
+            </div>
+        </div>
+    </div>
 </aside>
+
+<!-- ===== MAIN ===== -->
 <main class="flex-1 ml-[260px] min-h-screen p-8 lg:p-12">
-<header class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
-<div>
-<h2 class="font-display text-3xl font-bold text-slate-900 dark:text-white">Welcome back, Sir Ahmed!</h2>
-<p class="text-slate-500 mt-1">Here's an overview of your academic performance today.</p>
-</div>
-<div class="flex items-center gap-3 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="flex flex-col items-end text-right">
-<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Current Session</p>
-<p class="text-sm font-bold text-slate-900 dark:text-white">2024 - 2025</p>
-</div>
-<div class="w-px h-8 bg-slate-200 dark:border-slate-800 mx-2"></div>
-<span class="material-symbols-outlined text-primary">calendar_today</span>
-</div>
-</header>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-primary/10 p-2 rounded-lg text-primary"><span class="material-symbols-outlined">groups</span></div>
-<span class="text-emerald-500 text-xs font-bold flex items-center">+12% <span class="material-symbols-outlined text-sm ml-0.5">trending_up</span></span>
-</div>
-<p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Total Students</p>
-<h3 class="font-display text-2xl font-bold text-slate-900 dark:text-white">1,284</h3>
-</div>
-<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-blue-500/10 p-2 rounded-lg text-blue-500"><span class="material-symbols-outlined">school</span></div>
-<span class="text-emerald-500 text-xs font-bold flex items-center">+3 <span class="material-symbols-outlined text-sm ml-0.5">add</span></span>
-</div>
-<p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Active Classrooms</p>
-<h3 class="font-display text-2xl font-bold text-slate-900 dark:text-white">8</h3>
-</div>
-<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-amber-500/10 p-2 rounded-lg text-amber-500"><span class="material-symbols-outlined">quiz</span></div>
-<span class="text-amber-500 text-xs font-bold flex items-center">85% <span class="material-symbols-outlined text-sm ml-0.5">check_circle</span></span>
-</div>
-<p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Avg. Quiz Score</p>
-<h3 class="font-display text-2xl font-bold text-slate-900 dark:text-white">72/100</h3>
-</div>
-<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-purple-500/10 p-2 rounded-lg text-purple-500"><span class="material-symbols-outlined">bolt</span></div>
-<span class="text-emerald-500 text-xs font-bold flex items-center">Active <span class="material-symbols-outlined text-sm ml-0.5">offline_bolt</span></span>
-</div>
-<p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">AI Usage</p>
-<h3 class="font-display text-2xl font-bold text-slate-900 dark:text-white">94%</h3>
-</div>
-</div>
-<div class="mb-6 flex items-center justify-between">
-<h3 class="font-display text-xl font-bold text-slate-900 dark:text-white">Active Classrooms</h3>
-<!-- FIXED: classrooms -> teacher_classrooms -->
-<a class="text-primary text-sm font-bold flex items-center gap-1 hover:underline" href="{{ url_for('teacher_classrooms') }}">View all <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:border-primary/50 transition-all flex flex-col">
-<div class="p-6 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-primary/10 p-3 rounded-xl text-primary"><span class="material-symbols-outlined">bolt</span></div>
-<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 uppercase tracking-wider">Section A • 10th</span>
-</div>
-<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white mb-1">10th Class Physics</h4>
-<p class="text-sm text-slate-500 flex items-center gap-2 mb-6">
-<span class="material-symbols-outlined text-base text-slate-400">groups</span> 42 Students Enrolled
-</p>
-<div class="space-y-2">
-<div class="flex justify-between text-xs font-semibold">
-<span class="text-slate-500">Curriculum Progress</span>
-<span class="text-primary">70%</span>
-</div>
-<div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 70%"></div>
-</div>
-</div>
-</div>
-<div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
-<span class="text-xs text-slate-400 font-medium italic">Last updated: 2h ago</span>
-<a href="{{ url_for('teacher_roadmap', subject='Physics') }}" class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-display text-sm font-bold transition-all shadow-sm flex items-center gap-2">
-Manage <span class="material-symbols-outlined text-sm">arrow_forward</span>
-</a>
-</div>
-</div>
-<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:border-primary/50 transition-all flex flex-col">
-<div class="p-6 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-primary/10 p-3 rounded-xl text-primary"><span class="material-symbols-outlined">science</span></div>
-<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 uppercase tracking-wider">Section B • 9th</span>
-</div>
-<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white mb-1">9th Class Chemistry</h4>
-<p class="text-sm text-slate-500 flex items-center gap-2 mb-6">
-<span class="material-symbols-outlined text-base text-slate-400">groups</span> 38 Students Enrolled
-</p>
-<div class="space-y-2">
-<div class="flex justify-between text-xs font-semibold">
-<span class="text-slate-500">Curriculum Progress</span>
-<span class="text-primary">45%</span>
-</div>
-<div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 45%"></div>
-</div>
-</div>
-</div>
-<div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
-<span class="text-xs text-slate-400 font-medium italic">Last updated: Yesterday</span>
-<a href="{{ url_for('teacher_roadmap', subject='Chemistry') }}" class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-display text-sm font-bold transition-all shadow-sm flex items-center gap-2">
-Manage <span class="material-symbols-outlined text-sm">arrow_forward</span>
-</a>
-</div>
-</div>
-<!-- FIXED: classrooms -> teacher_classrooms -->
-<a href="{{ url_for('teacher_classrooms') }}" class="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center gap-3 text-slate-400 hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all min-h-[280px]">
-<div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-2"><span class="material-symbols-outlined text-3xl">add</span></div>
-<span class="font-display font-bold text-lg">Create New Classroom</span>
-<p class="text-xs text-center max-w-[200px]">Start a new session for your students</p>
-</a>
-</div>
+
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+        <div>
+            <h2 class="font-display text-3xl font-bold text-slate-900 dark:text-white">
+                Welcome back, {{ user.full_name or 'Teacher' }}!
+            </h2>
+            <p class="text-slate-500 mt-1">Here's an overview of your teaching activity.</p>
+        </div>
+        <a href="{{ url_for('logout') }}" class="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-bold hover:bg-red-600 hover:text-white transition-all w-fit">
+            <span class="material-symbols-outlined text-sm">logout</span>
+            Logout
+        </a>
+    </header>
+
+    <!-- Stats: only real data -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+
+        <!-- Active Classrooms: real count -->
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+                <div class="bg-primary/10 p-2 rounded-lg text-primary">
+                    <span class="material-symbols-outlined">school</span>
+                </div>
+            </div>
+            <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Active Classrooms</p>
+            <h3 class="font-display text-2xl font-bold text-slate-900 dark:text-white">{{ classrooms|length }}</h3>
+        </div>
+
+        <!-- Quiz Score: N/A (Phase 2) -->
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex justify-between items-start mb-4">
+                <div class="bg-amber-500/10 p-2 rounded-lg text-amber-500">
+                    <span class="material-symbols-outlined">quiz</span>
+                </div>
+            </div>
+            <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Avg. Quiz Score</p>
+            <h3 class="font-display text-2xl font-bold text-slate-400">N/A</h3>
+            <p class="text-[10px] text-slate-300 mt-1">No quiz data yet</p>
+        </div>
+
+    </div>
+
+    <!-- Classrooms Section -->
+    <div class="mb-6 flex items-center justify-between">
+        <h3 class="font-display text-xl font-bold text-slate-900 dark:text-white">Active Classrooms</h3>
+        <a class="text-primary text-sm font-bold flex items-center gap-1 hover:underline" href="{{ url_for('teacher_classrooms') }}">
+            View all <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
+    </div>
+
+    {% if classrooms %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for c in classrooms %}
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:border-primary/50 transition-all flex flex-col">
+            <div class="p-6 flex-1">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="bg-primary/10 p-3 rounded-xl text-primary">
+                        <span class="material-symbols-outlined">school</span>
+                    </div>
+                    <span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                        Section {{ c.section }} • {{ c.class_year }}
+                    </span>
+                </div>
+                <h4 class="font-display text-lg font-bold text-slate-900 dark:text-white mb-1">{{ c.subject }}</h4>
+                <p class="text-xs text-slate-400 mb-3">College: {{ c.college_id }}</p>
+                <!-- Progress: N/A until real data exists -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs font-semibold">
+                        <span class="text-slate-500">Curriculum Progress</span>
+                        <span class="text-slate-400">N/A</span>
+                    </div>
+                    <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-slate-200 rounded-full w-0"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                <a href="{{ url_for('teacher_roadmap', subject=c.subject) }}"
+                   class="px-5 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-display text-sm font-bold transition-all shadow-sm flex items-center gap-2">
+                    Manage <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Add new classroom shortcut -->
+        <a href="{{ url_for('teacher_classrooms') }}" class="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center gap-3 text-slate-400 hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all min-h-[240px]">
+            <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-2">
+                <span class="material-symbols-outlined text-3xl">add</span>
+            </div>
+            <span class="font-display font-bold text-lg">Create New Classroom</span>
+            <p class="text-xs text-center max-w-[200px]">Start a new session for your students</p>
+        </a>
+    </div>
+
+    {% else %}
+    <!-- Empty state -->
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-16 text-center">
+        <span class="material-symbols-outlined text-6xl text-slate-300 mb-4 block">school</span>
+        <h4 class="font-display text-xl font-bold text-slate-400 mb-2">No classrooms yet</h4>
+        <p class="text-sm text-slate-400 mb-6">Apna pehla classroom create karein aur students ko auto-enroll karein.</p>
+        <a href="{{ url_for('teacher_classrooms') }}"
+           class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl font-display font-bold text-sm transition-all shadow-sm">
+            <span class="material-symbols-outlined text-sm">add</span>
+            Create First Classroom
+        </a>
+    </div>
+    {% endif %}
+
 </main>
-</body></html>
-
-
+</body>
+</html>

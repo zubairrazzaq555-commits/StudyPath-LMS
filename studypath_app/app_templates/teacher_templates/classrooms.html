@@ -1,249 +1,361 @@
 <!DOCTYPE html>
-<html class="light" lang="en"><head>
+<html class="light" lang="en">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>StudyPath Pro - Classrooms List</title>
+<title>StudyPath Pro - Classrooms</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#10b981",
-                        "background-light": "#f9fafb",
-                        "background-dark": "#10221c",
-                    },
-                    fontFamily: {
-                        "display": ["Lexend", "sans-serif"],
-                        "body": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#10b981",
+                    "background-light": "#f9fafb",
+                    "background-dark": "#10221c",
+                },
+                fontFamily: {
+                    "display": ["Lexend", "sans-serif"],
+                    "body": ["Inter", "sans-serif"]
+                },
+                borderRadius: {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
                 },
             },
-        }
-    </script>
+        },
+    }
+</script>
 <style type="text/tailwindcss">
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .font-display {
-            font-family: 'Lexend', sans-serif;
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-    </style>
+    body { font-family: 'Inter', sans-serif; }
+    .font-display { font-family: 'Lexend', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+</style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex">
+
+<!-- ===== SIDEBAR ===== -->
 <aside class="w-[260px] h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed left-0 top-0 z-50">
-<div class="p-6 flex items-center gap-3">
-<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
-<span class="material-symbols-outlined text-2xl">auto_stories</span>
-</div>
-<div>
-<h1 class="font-display font-bold text-lg leading-tight text-slate-900 dark:text-white">StudyPath Pro</h1>
-<p class="text-[10px] uppercase tracking-wider font-bold text-primary/80">Sindh Board Edition</p>
-</div>
-</div>
-<nav class="flex-1 px-4 mt-4 space-y-1">
-<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_dashboard' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_dashboard') }}">
-<span class="material-symbols-outlined">dashboard</span>
-<span class="font-display text-sm">Dashboard</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_classrooms' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_classrooms') }}">
-<span class="material-symbols-outlined">school</span>
-<span class="font-display text-sm">Classrooms</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_curriculum' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_curriculum') }}">
-<span class="material-symbols-outlined">menu_book</span>
-<span class="font-display text-sm">Curriculum</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition-colors" a href="{{ url_for('teacher_report') }}">
-<span class="material-symbols-outlined">bar_chart</span>
-<span class="font-display text-sm">Reports</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition-colors" a href="{{ url_for('teacher_profile') }}">
-<span class="material-symbols-outlined">person</span>
-<span class="font-display text-sm">Profile</span>
-</a>
-</nav>
-<div class="p-6 mt-auto">
-<div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
-<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary overflow-hidden">
-<img alt="Teacher profile avatar" class="w-full h-full object-cover" src="{{ url_for('static', filename='images/teacher_avatar.png') }}"/>
-</div>
-<div class="overflow-hidden">
-<p class="text-xs font-bold text-slate-900 dark:text-white truncate">Sir Ahmed</p>
-<p class="text-[10px] text-slate-500 truncate">Senior Educator</p>
-</div>
-</div>
-</div>
+    <div class="p-6 flex items-center gap-3">
+        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+            <span class="material-symbols-outlined text-2xl">auto_stories</span>
+        </div>
+        <div>
+            <h1 class="font-display font-bold text-lg leading-tight text-slate-900 dark:text-white">StudyPath Pro</h1>
+            <p class="text-[10px] uppercase tracking-wider font-bold text-primary/80">Sindh Board Edition</p>
+        </div>
+    </div>
+    <nav class="flex-1 px-4 mt-4 space-y-1">
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_dashboard' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_dashboard') }}">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="font-display text-sm">Dashboard</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_classrooms' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_classrooms') }}">
+            <span class="material-symbols-outlined">school</span>
+            <span class="font-display text-sm">Classrooms</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_curriculum' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_curriculum') }}">
+            <span class="material-symbols-outlined">menu_book</span>
+            <span class="font-display text-sm">Curriculum</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_report' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_report') }}">
+            <span class="material-symbols-outlined">bar_chart</span>
+            <span class="font-display text-sm">Reports</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_profile' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_profile') }}">
+            <span class="material-symbols-outlined">person</span>
+            <span class="font-display text-sm">Profile</span>
+        </a>
+    </nav>
+    <div class="p-6 mt-auto">
+        <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+            <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm">
+                {{ user.full_name[0].upper() if user.full_name else 'T' }}
+            </div>
+            <div class="overflow-hidden">
+                <p class="text-xs font-bold text-slate-900 dark:text-white truncate">{{ user.full_name or 'Teacher' }}</p>
+                <p class="text-[10px] text-slate-500 truncate">Educator</p>
+            </div>
+        </div>
+    </div>
 </aside>
+
+<!-- ===== MAIN ===== -->
 <main class="flex-1 ml-[260px] min-h-screen p-8 lg:p-12">
-<header class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
-<div>
-<h2 class="font-display text-3xl font-bold text-slate-900 dark:text-white">My Classrooms</h2>
-<p class="text-slate-500 mt-1">Manage and track your active teaching sessions</p>
-</div>
-<div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
-<div class="relative w-full sm:w-64">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
-<input class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm" placeholder="Search classrooms..." type="text"/>
-</div>
-<div class="relative w-full sm:w-44">
-<select class="w-full pl-3 pr-10 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm appearance-none cursor-pointer">
-<option>All Grades</option>
-<option>9th Class</option>
-<option>10th Class</option>
-<option>1st Year</option>
-<option>2nd Year</option>
-</select>
-<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
-</div>
-<button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-display font-semibold text-sm transition-all shadow-sm">
-<span class="material-symbols-outlined text-lg">add</span>
-                Create New
-            </button>
-</div>
-</header>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:border-primary/50 transition-all flex flex-col">
-<div class="p-6 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-primary/10 p-3 rounded-lg text-primary">
-<span class="material-symbols-outlined">bolt</span>
-</div>
-<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 uppercase tracking-wider">Section A • 10th</span>
-</div>
-<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white mb-1">10th Class Physics</h4>
-<p class="text-sm text-slate-500 flex items-center gap-2 mb-6">
-<span class="material-symbols-outlined text-base">groups</span>
-                    42 Students Enrolled
+
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+        <div>
+            <h2 class="font-display text-3xl font-bold text-slate-900 dark:text-white">My Classrooms</h2>
+            <p class="text-slate-500 mt-1">Manage and track your active teaching sessions</p>
+        </div>
+        <button onclick="openModal()" class="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 font-display font-semibold text-sm transition-all shadow-sm">
+            <span class="material-symbols-outlined text-lg">add</span>
+            Create New Classroom
+        </button>
+    </header>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed top-6 right-6 z-[100] px-5 py-3 rounded-xl shadow-lg font-display text-sm font-semibold flex items-center gap-2 transition-all"></div>
+
+    <!-- Classroom Grid -->
+    <div id="classroom-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        {% for c in classrooms %}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:border-primary/50 transition-all flex flex-col">
+            <div class="p-6 flex-1">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="bg-primary/10 p-3 rounded-lg text-primary">
+                        <span class="material-symbols-outlined">school</span>
+                    </div>
+                    <span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                        Section {{ c.section }} • {{ c.class_year }}
+                    </span>
+                </div>
+                <h4 class="font-display text-lg font-bold text-slate-900 dark:text-white mb-1">{{ c.subject }}</h4>
+                <p class="text-xs text-slate-400 mb-1">College: {{ c.college_id }}</p>
+                <p class="text-sm text-slate-500 flex items-center gap-2 mt-3">
+                    <span class="material-symbols-outlined text-base">groups</span>
+                    Enrolled students auto-synced
                 </p>
-<div class="space-y-2">
-<div class="flex justify-between text-xs font-semibold">
-<span class="text-slate-500">Curriculum Progress</span>
-<span class="text-primary font-bold">70%</span>
-</div>
-<div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-<div class="h-full bg-primary rounded-full" style="width: 70%"></div>
-</div>
-</div>
-</div>
-<div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800">
-<button class="w-full py-2.5 bg-white dark:bg-slate-900 border border-primary/20 hover:border-primary hover:bg-primary hover:text-white text-primary rounded-lg font-display text-sm font-bold transition-all flex items-center justify-center gap-2">
+            </div>
+            <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800">
+                <button class="w-full py-2.5 bg-white dark:bg-slate-900 border border-primary/20 hover:border-primary hover:bg-primary hover:text-white text-primary rounded-lg font-display text-sm font-bold transition-all flex items-center justify-center gap-2">
                     Manage Classroom
                     <span class="material-symbols-outlined text-sm">settings</span>
-</button>
-</div>
-</div>
-<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:border-primary/50 transition-all flex flex-col">
-<div class="p-6 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-primary/10 p-3 rounded-lg text-primary">
-<span class="material-symbols-outlined">science</span>
-</div>
-<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 uppercase tracking-wider">Section B • 9th</span>
-</div>
-<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white mb-1">9th Class Chemistry</h4>
-<p class="text-sm text-slate-500 flex items-center gap-2 mb-6">
-<span class="material-symbols-outlined text-base">groups</span>
-                    38 Students Enrolled
-                </p>
-<div class="space-y-2">
-<div class="flex justify-between text-xs font-semibold">
-<span class="text-slate-500">Curriculum Progress</span>
-<span class="text-primary font-bold">45%</span>
-</div>
-<div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-<div class="h-full bg-primary rounded-full" style="width: 45%"></div>
-</div>
-</div>
-</div>
-<div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800">
-<button class="w-full py-2.5 bg-white dark:bg-slate-900 border border-primary/20 hover:border-primary hover:bg-primary hover:text-white text-primary rounded-lg font-display text-sm font-bold transition-all flex items-center justify-center gap-2">
-                    Manage Classroom
-                    <span class="material-symbols-outlined text-sm">settings</span>
-</button>
-</div>
-</div>
-<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:border-primary/50 transition-all flex flex-col">
-<div class="p-6 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-primary/10 p-3 rounded-lg text-primary">
-<span class="material-symbols-outlined">science</span>
-</div>
-<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 uppercase tracking-wider">Medical • 11th</span>
-</div>
-<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white mb-1">1st Year Biology</h4>
-<p class="text-sm text-slate-500 flex items-center gap-2 mb-6">
-<span class="material-symbols-outlined text-base">groups</span>
-                    65 Students Enrolled
-                </p>
-<div class="space-y-2">
-<div class="flex justify-between text-xs font-semibold">
-<span class="text-slate-500">Curriculum Progress</span>
-<span class="text-primary font-bold">25%</span>
-</div>
-<div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-<div class="h-full bg-primary rounded-full" style="width: 25%"></div>
-</div>
-</div>
-</div>
-<div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800">
-<button class="w-full py-2.5 bg-white dark:bg-slate-900 border border-primary/20 hover:border-primary hover:bg-primary hover:text-white text-primary rounded-lg font-display text-sm font-bold transition-all flex items-center justify-center gap-2">
-                    Manage Classroom
-                    <span class="material-symbols-outlined text-sm">settings</span>
-</button>
-</div>
-</div>
-<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:border-primary/50 transition-all flex flex-col">
-<div class="p-6 flex-1">
-<div class="flex justify-between items-start mb-4">
-<div class="bg-primary/10 p-3 rounded-lg text-primary">
-<span class="material-symbols-outlined">functions</span>
-</div>
-<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 uppercase tracking-wider">Section A • 10th</span>
-</div>
-<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white mb-1">10th Class Mathematics</h4>
-<p class="text-sm text-slate-500 flex items-center gap-2 mb-6">
-<span class="material-symbols-outlined text-base">groups</span>
-                    45 Students Enrolled
-                </p>
-<div class="space-y-2">
-<div class="flex justify-between text-xs font-semibold">
-<span class="text-slate-500">Curriculum Progress</span>
-<span class="text-primary font-bold">85%</span>
-</div>
-<div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-<div class="h-full bg-primary rounded-full" style="width: 85%"></div>
-</div>
-</div>
-</div>
-<div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800">
-<button class="w-full py-2.5 bg-white dark:bg-slate-900 border border-primary/20 hover:border-primary hover:bg-primary hover:text-white text-primary rounded-lg font-display text-sm font-bold transition-all flex items-center justify-center gap-2">
-                    Manage Classroom
-                    <span class="material-symbols-outlined text-sm">settings</span>
-</button>
-</div>
-</div>
-<button class="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-8 flex flex-col items-center justify-center gap-3 text-slate-400 hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all min-h-[340px]">
-<div class="w-14 h-14 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-2">
-<span class="material-symbols-outlined text-4xl">add</span>
-</div>
-<span class="font-display font-bold text-lg">Assign New Classroom</span>
-<p class="text-xs text-center max-w-[200px]">Create a new digital classroom for the current academic session.</p>
-</button>
-</div>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Empty state (shown only when no classrooms) -->
+        {% if not classrooms %}
+        <div id="empty-state" class="col-span-full flex flex-col items-center justify-center py-20 text-slate-400">
+            <span class="material-symbols-outlined text-6xl mb-4">school</span>
+            <p class="font-display font-bold text-lg">No classrooms yet</p>
+            <p class="text-sm mt-1">Click "Create New Classroom" to get started</p>
+        </div>
+        {% endif %}
+
+    </div>
 </main>
-</body></html>
 
+<!-- ===== CREATE CLASSROOM MODAL ===== -->
+<div id="modal-overlay" class="hidden fixed inset-0 bg-black/50 z-[90] flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-800">
 
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined">add_circle</span>
+                </div>
+                <h3 class="font-display font-bold text-lg text-slate-900 dark:text-white">Create New Classroom</h3>
+            </div>
+            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <!-- Modal Form -->
+        <form id="create-classroom-form" class="p-6 space-y-4">
+
+            <!-- Subject -->
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Subject</label>
+                <input id="field-subject" type="text" placeholder="e.g. Physics, Chemistry, Math"
+                    class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"/>
+            </div>
+
+            <!-- Class Year -->
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Class Year</label>
+                <select id="field-class_year"
+                    class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none cursor-pointer">
+                    <option value="">Select class year</option>
+                    <option value="9th class">9th Class</option>
+                    <option value="10th class">10th Class</option>
+                    <option value="1st year">1st Year</option>
+                    <option value="2nd year">2nd Year</option>
+                </select>
+            </div>
+
+            <!-- Section -->
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Section</label>
+                <input id="field-section" type="text" placeholder="e.g. A, B, C"
+                    class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"/>
+            </div>
+
+            <!-- College ID -->
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">College ID</label>
+                <input id="field-college_id" type="text" placeholder="e.g. SMIU001"
+                    class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"/>
+            </div>
+
+            <!-- Error message -->
+            <p id="form-error" class="hidden text-red-500 text-xs font-semibold flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">error</span>
+                <span id="form-error-text"></span>
+            </p>
+
+            <!-- Buttons -->
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="closeModal()"
+                    class="flex-1 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-lg font-display text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                    Cancel
+                </button>
+                <button type="submit" id="submit-btn"
+                    class="flex-1 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-display text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-sm">add</span>
+                    <span id="submit-text">Create Classroom</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    // --- Modal open/close ---
+    function openModal() {
+        document.getElementById('modal-overlay').classList.remove('hidden');
+        document.getElementById('field-subject').focus();
+    }
+
+    function closeModal() {
+        document.getElementById('modal-overlay').classList.add('hidden');
+        document.getElementById('create-classroom-form').reset();
+        hideError();
+    }
+
+    // Close modal on overlay click
+    document.getElementById('modal-overlay').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    // --- Error helpers ---
+    function showError(msg) {
+        document.getElementById('form-error-text').textContent = msg;
+        document.getElementById('form-error').classList.remove('hidden');
+    }
+
+    function hideError() {
+        document.getElementById('form-error').classList.add('hidden');
+    }
+
+    // --- Toast ---
+    function showToast(msg, isSuccess) {
+        const toast = document.getElementById('toast');
+        toast.className = `fixed top-6 right-6 z-[100] px-5 py-3 rounded-xl shadow-lg font-display text-sm font-semibold flex items-center gap-2 transition-all ${isSuccess ? 'bg-primary text-white' : 'bg-red-500 text-white'}`;
+        toast.innerHTML = `<span class="material-symbols-outlined text-sm">${isSuccess ? 'check_circle' : 'error'}</span> ${msg}`;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3500);
+    }
+
+    // --- Subject icon map ---
+    const subjectIcons = {
+        'physics': 'bolt', 'chemistry': 'science', 'biology': 'biotech',
+        'math': 'functions', 'mathematics': 'functions', 'english': 'translate',
+        'urdu': 'translate', 'computer': 'computer', 'default': 'school'
+    };
+
+    function getIcon(subject) {
+        const key = subject.toLowerCase();
+        for (const [k, v] of Object.entries(subjectIcons)) {
+            if (key.includes(k)) return v;
+        }
+        return subjectIcons.default;
+    }
+
+    // --- Add classroom card to grid ---
+    function addClassroomCard(c) {
+        // Remove empty state if present
+        const emptyState = document.getElementById('empty-state');
+        if (emptyState) emptyState.remove();
+
+        const icon = getIcon(c.subject);
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden group hover:border-primary/50 transition-all flex flex-col';
+        card.innerHTML = `
+            <div class="p-6 flex-1">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="bg-primary/10 p-3 rounded-lg text-primary">
+                        <span class="material-symbols-outlined">${icon}</span>
+                    </div>
+                    <span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                        Section ${c.section} • ${c.class_year}
+                    </span>
+                </div>
+                <h4 class="font-display text-lg font-bold text-slate-900 dark:text-white mb-1">${c.subject}</h4>
+                <p class="text-xs text-slate-400 mb-1">College: ${c.college_id}</p>
+                <p class="text-sm text-slate-500 flex items-center gap-2 mt-3">
+                    <span class="material-symbols-outlined text-base">groups</span>
+                    Enrolled students auto-synced
+                </p>
+            </div>
+            <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800">
+                <button class="w-full py-2.5 bg-white dark:bg-slate-900 border border-primary/20 hover:border-primary hover:bg-primary hover:text-white text-primary rounded-lg font-display text-sm font-bold transition-all flex items-center justify-center gap-2">
+                    Manage Classroom
+                    <span class="material-symbols-outlined text-sm">settings</span>
+                </button>
+            </div>
+        `;
+        document.getElementById('classroom-grid').appendChild(card);
+    }
+
+    // --- Form submit ---
+    document.getElementById('create-classroom-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        hideError();
+
+        const subject    = document.getElementById('field-subject').value.trim();
+        const class_year = document.getElementById('field-class_year').value.trim();
+        const section    = document.getElementById('field-section').value.trim();
+        const college_id = document.getElementById('field-college_id').value.trim();
+
+        // Client-side validation
+        if (!subject || !class_year || !section || !college_id) {
+            showError('Please fill in all fields.');
+            return;
+        }
+
+        // Loading state
+        const btn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('submit-text');
+        btn.disabled = true;
+        btnText.textContent = 'Creating...';
+
+        try {
+            const res = await fetch('/create-classroom', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subject, class_year, section, college_id })
+            });
+
+            const data = await res.json();
+
+            if (res.status === 201) {
+                closeModal();
+                addClassroomCard({ subject, class_year, section, college_id, id: data.classroom_id });
+                showToast('Classroom created successfully!', true);
+            } else {
+                showError(data.error || 'Something went wrong. Try again.');
+            }
+        } catch (err) {
+            showError('Network error. Is the server running?');
+        } finally {
+            btn.disabled = false;
+            btnText.textContent = 'Create Classroom';
+        }
+    });
+</script>
+
+</body>
+</html>

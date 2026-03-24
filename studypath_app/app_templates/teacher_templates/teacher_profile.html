@@ -1,246 +1,152 @@
 <!DOCTYPE html>
-<html class="light" lang="en"><head>
+<html class="light" lang="en">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>StudyPath Pro - Teacher Profile Settings</title>
+<title>StudyPath Pro - Profile</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#10b77f",
-                        "background-light": "#f9fafb",
-                        "background-dark": "#10221c",
-                    },
-                    fontFamily: {
-                        "display": ["Lexend", "sans-serif"],
-                        "body": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
-    </script>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: { extend: { colors: { "primary": "#10b981", "background-light": "#f9fafb" }, fontFamily: { "display": ["Lexend","sans-serif"] } } }
+    }
+</script>
 <style type="text/tailwindcss">
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .font-display {
-            font-family: 'Lexend', sans-serif;
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-    </style>
+    body { font-family: 'Inter', sans-serif; }
+    .font-display { font-family: 'Lexend', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+</style>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex">
-<aside class="w-[260px] h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed left-0 top-0 z-50">
-<div class="p-6 flex items-center gap-3">
-<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
-<span class="material-symbols-outlined text-2xl">auto_stories</span>
-</div>
-<div>
-<h1 class="font-display font-bold text-lg leading-tight text-slate-900 dark:text-white">StudyPath Pro</h1>
-<p class="text-[10px] uppercase tracking-wider font-bold text-primary/80">Sindh Board Edition</p>
-</div>
-</div>
-<nav class="flex-1 px-4 mt-4 space-y-1">
-<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_dashboard' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_dashboard') }}">
-<span class="material-symbols-outlined">dashboard</span>
-<span class="font-display text-sm">Dashboard</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_classrooms' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_classrooms') }}">
-<span class="material-symbols-outlined">school</span>
-<span class="font-display text-sm">Classrooms</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_curriculum' else 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_curriculum') }}">
-<span class="material-symbols-outlined">menu_book</span>
-<span class="font-display text-sm">Curriculum</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition-colors" a href="{{ url_for('teacher_report') }}">
-<span class="material-symbols-outlined">bar_chart</span>
-<span class="font-display text-sm">Reports</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition-colors" a href="{{ url_for('teacher_profile') }}">
-<span class="material-symbols-outlined">person</span>
-<span class="font-display text-sm">Profile</span>
-</a>
-</nav>
-<div class="p-6 mt-auto">
-<div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
-<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary overflow-hidden">
-<img alt="Teacher profile avatar" class="w-full h-full object-cover" src="{{ url_for('static', filename='images/teacher_avatar.png') }}"/>
-</div>
-<div class="overflow-hidden">
-<p class="text-xs font-bold text-slate-900 dark:text-white truncate">{{ user.full_name }}</p>
-<p class="text-[10px] text-slate-500 truncate">{{ user.role|title }}</p>
-</div>
-</div>
-</div>
+<body class="bg-background-light text-slate-900 min-h-screen flex">
+
+<!-- Sidebar -->
+<aside class="w-[260px] h-screen bg-white border-r border-slate-200 flex flex-col fixed left-0 top-0 z-50">
+    <div class="p-6 flex items-center gap-3">
+        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+            <span class="material-symbols-outlined text-2xl">auto_stories</span>
+        </div>
+        <div>
+            <h1 class="font-display font-bold text-lg leading-tight">StudyPath Pro</h1>
+            <p class="text-[10px] uppercase tracking-wider font-bold text-primary/80">Sindh Board Edition</p>
+        </div>
+    </div>
+    <nav class="flex-1 px-4 mt-4 space-y-1">
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_dashboard' else 'text-slate-500 hover:bg-slate-50' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_dashboard') }}">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="font-display text-sm">Dashboard</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_classrooms' else 'text-slate-500 hover:bg-slate-50' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_classrooms') }}">
+            <span class="material-symbols-outlined">school</span>
+            <span class="font-display text-sm">Classrooms</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_curriculum' else 'text-slate-500 hover:bg-slate-50' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_curriculum') }}">
+            <span class="material-symbols-outlined">menu_book</span>
+            <span class="font-display text-sm">Curriculum</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_report' else 'text-slate-500 hover:bg-slate-50' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_report') }}">
+            <span class="material-symbols-outlined">bar_chart</span>
+            <span class="font-display text-sm">Reports</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 {{ 'bg-primary/10 text-primary border-r-4 border-primary' if active_page == 'teacher_profile' else 'text-slate-500 hover:bg-slate-50' }} rounded-lg font-medium transition-colors" href="{{ url_for('teacher_profile') }}">
+            <span class="material-symbols-outlined">person</span>
+            <span class="font-display text-sm">Profile</span>
+        </a>
+    </nav>
+    <div class="p-6 mt-auto">
+        <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+            <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm">
+                {{ user.full_name[0].upper() if user.full_name else 'T' }}
+            </div>
+            <div class="overflow-hidden">
+                <p class="text-xs font-bold text-slate-900 truncate">{{ user.full_name or 'Teacher' }}</p>
+                <p class="text-[10px] text-slate-500 truncate">Educator</p>
+            </div>
+        </div>
+    </div>
 </aside>
+
+<!-- Main -->
 <main class="flex-1 ml-[260px] min-h-screen p-8 lg:p-12">
-<header class="flex items-center justify-between mb-8">
-<div>
-<h2 class="font-display text-3xl font-bold text-slate-900 dark:text-white">Profile Settings</h2>
-<p class="text-slate-500 mt-1">Manage your account preferences and personal information</p>
-</div>
-<div class="flex items-center gap-4">
-<button class="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors relative">
-<span class="material-symbols-outlined text-xl">notifications</span>
-<span class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-800"></span>
-</button>
-</div>
-</header>
-<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8 mb-8 flex items-center gap-8 shadow-sm">
-<div class="relative group">
-<div class="w-28 h-28 rounded-2xl bg-slate-100 overflow-hidden border-4 border-slate-50 shadow-inner">
-<img alt="{{ user.full_name }} Profile" class="w-full h-full object-cover" src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ user.full_name }}"/>
-</div>
-<button class="absolute -bottom-2 -right-2 bg-primary text-white p-2 rounded-lg shadow-lg hover:scale-105 transition-transform">
-<span class="material-symbols-outlined text-sm">photo_camera</span>
-</button>
-</div>
-<div>
-<h3 class="font-display text-2xl font-bold text-slate-900 dark:text-white">{{ user.full_name }}</h3>
-<p class="text-slate-500 font-medium">{{ user.role|title }} • {{ user.group or 'General' }} Department</p>
-<div class="mt-3 flex items-center gap-4">
-<span class="flex items-center gap-1.5 text-xs font-semibold px-3 py-1 bg-primary/10 text-primary rounded-full uppercase tracking-wider">
-<span class="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                    Verified Profile
-                </span>
-<span class="text-xs text-slate-400">Member since August 2022</span>
-</div>
-</div>
-</div>
-<div class="grid grid-cols-1 gap-8">
-<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-xl">badge</span>
-<h4 class="font-display font-bold text-slate-800 dark:text-white">Personal Information</h4>
-</div>
-<form action="{{ url_for('update_profile') }}" method="POST">
-<div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="space-y-2">
-<label class="text-sm font-semibold text-slate-600 dark:text-slate-400">Full Name</label>
-<input class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary transition-all text-sm" type="text" name="full_name" value="{{ user.full_name }}"/>
-</div>
-<div class="space-y-2">
-<label class="text-sm font-semibold text-slate-600 dark:text-slate-400">Email Address</label>
-<input class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary transition-all text-sm" type="email" name="email" value="{{ user.email }}"/>
-</div>
-<div class="space-y-2">
-<label class="text-sm font-semibold text-slate-600 dark:text-slate-400">Phone Number</label>
-<input class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary transition-all text-sm" type="tel" value="+92 300 1234567"/>
-</div>
-<div class="space-y-2">
-<label class="text-sm font-semibold text-slate-600 dark:text-slate-400">Department</label>
-<select class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary transition-all text-sm">
-<option>Science</option>
-<option selected="">Physics</option>
-<option>Chemistry</option>
-<option>Mathematics</option>
-</select>
-</div>
-<div class="space-y-2 md:col-span-2">
-<label class="text-sm font-semibold text-slate-600 dark:text-slate-400">Biography</label>
-<textarea class="w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary transition-all text-sm" rows="3" name="bio">{{ user.college or 'Senior educator specializing in Sindh Board curriculum.' }}</textarea>
-</div>
-</div>
-<div class="px-8 pb-8">
-<button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg font-bold text-sm hover:bg-primary/90 transition-all">Save Changes</button>
-</div>
-</form>
-</div>
-<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-xl">lock</span>
-<h4 class="font-display font-bold text-slate-800 dark:text-white">Account Security</h4>
-</div>
-<div class="p-8 space-y-6">
-<div class="flex items-center justify-between p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200 dark:border-slate-700">
-<span class="material-symbols-outlined text-slate-400">password</span>
-</div>
-<div>
-<p class="text-sm font-bold text-slate-800 dark:text-white">Change Password</p>
-<p class="text-xs text-slate-500">Last updated 3 months ago</p>
-</div>
-</div>
-<button class="text-primary hover:bg-primary/5 px-4 py-2 rounded-lg text-sm font-bold transition-all border border-primary/20">Update</button>
-</div>
-<div class="flex items-center justify-between p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200 dark:border-slate-700">
-<span class="material-symbols-outlined text-slate-400">security</span>
-</div>
-<div>
-<p class="text-sm font-bold text-slate-800 dark:text-white">Two-Factor Authentication</p>
-<p class="text-xs text-slate-500">Currently disabled for your account</p>
-</div>
-</div>
-<button class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg text-sm font-bold transition-all">Enable</button>
-</div>
-</div>
-</div>
-<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-xl">notifications_active</span>
-<h4 class="font-display font-bold text-slate-800 dark:text-white">Notification Preferences</h4>
-</div>
-<div class="p-8 space-y-4">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-sm font-bold text-slate-800 dark:text-white">Student Assignments</p>
-<p class="text-xs text-slate-500">Notify when a student submits a new assignment</p>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-</label>
-</div>
-<div class="flex items-center justify-between pt-4 border-t border-slate-50 dark:border-slate-800">
-<div>
-<p class="text-sm font-bold text-slate-800 dark:text-white">Curriculum Updates</p>
-<p class="text-xs text-slate-500">News about Sindh Board curriculum changes</p>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-</label>
-</div>
-<div class="flex items-center justify-between pt-4 border-t border-slate-50 dark:border-slate-800">
-<div>
-<p class="text-sm font-bold text-slate-800 dark:text-white">System Maintenance</p>
-<p class="text-xs text-slate-500">Alerts about scheduled platform updates</p>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input class="sr-only peer" type="checkbox"/>
-<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-</label>
-</div>
-</div>
-</div>
-<div class="flex items-center justify-end gap-4 mt-4 mb-12">
-<button class="px-8 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-display font-bold text-sm transition-all hover:bg-slate-200 dark:hover:bg-slate-700">
-                Cancel Changes
-            </button>
-<button class="px-8 py-3 bg-primary text-white rounded-xl font-display font-bold text-sm transition-all hover:bg-primary/90 shadow-lg shadow-primary/20 flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">save</span>
-                Update Profile
-            </button>
-</div>
-</div>
+
+    <header class="flex items-center justify-between mb-8">
+        <div>
+            <h2 class="font-display text-3xl font-bold text-slate-900">Profile Settings</h2>
+            <p class="text-slate-500 mt-1">Apni account details dekhein aur update karein</p>
+        </div>
+        <a href="{{ url_for('logout') }}" class="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-bold hover:bg-red-600 hover:text-white transition-all">
+            <span class="material-symbols-outlined text-sm">logout</span>
+            Logout
+        </a>
+    </header>
+
+    <!-- Avatar + name card -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-8 mb-6 flex items-center gap-6">
+        <div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-display font-bold text-3xl">
+            {{ user.full_name[0].upper() if user.full_name else 'T' }}
+        </div>
+        <div>
+            <h3 class="font-display text-2xl font-bold text-slate-900">{{ user.full_name or 'Teacher' }}</h3>
+            <p class="text-slate-500 text-sm mt-1">{{ user.email }}</p>
+            <span class="inline-flex items-center gap-1.5 mt-2 text-xs font-semibold px-3 py-1 bg-primary/10 text-primary rounded-full">
+                <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                Teacher Account
+            </span>
+        </div>
+    </div>
+
+    <!-- Personal Info Form -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm mb-6">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-xl">badge</span>
+            <h4 class="font-display font-bold text-slate-800">Personal Information</h4>
+        </div>
+        <form action="{{ url_for('update_profile') }}" method="POST">
+            <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-slate-600">Full Name</label>
+                    <input type="text" name="full_name" value="{{ user.full_name or '' }}"
+                           class="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"/>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-slate-600">Email Address</label>
+                    <input type="email" name="email" value="{{ user.email or '' }}"
+                           class="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"/>
+                </div>
+            </div>
+            <div class="px-8 pb-8">
+                <button type="submit" class="px-6 py-2.5 bg-primary text-white rounded-lg font-display font-bold text-sm hover:bg-primary/90 transition-all">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Account Security -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-xl">lock</span>
+            <h4 class="font-display font-bold text-slate-800">Account Security</h4>
+        </div>
+        <div class="p-8">
+            <div class="flex items-center justify-between p-4 rounded-lg bg-slate-50 border border-slate-100">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-slate-200">
+                        <span class="material-symbols-outlined text-slate-400">password</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">Change Password</p>
+                        <p class="text-xs text-slate-400">Password update feature Phase 2 mein aayega</p>
+                    </div>
+                </div>
+                <button disabled class="text-slate-300 px-4 py-2 rounded-lg text-sm font-bold border border-slate-200 cursor-not-allowed">
+                    Coming Soon
+                </button>
+            </div>
+        </div>
+    </div>
+
 </main>
-</body></html>
-
-
+</body>
+</html>
