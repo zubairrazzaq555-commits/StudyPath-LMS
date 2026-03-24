@@ -28,75 +28,76 @@ def load_user(user_id):
 # HELPER FUNCTION: AUTO-ENROLL STUDENT
 # ============================================
 def auto_enroll_student(student_id):
-    student = User.query.get(student_id)
+    # Fresh DB read - session cache bypass karo
+    db.session.expire_all()
+    student = db.session.get(User, student_id)
 
     # --- Guard checks ---
     if not student:
-        print(f"[AUTO-ENROLL] ERROR: student_id={student_id} not found in DB")
+        print(f"[AUTO-ENROLL] ERROR: student_id={student_id} not found")
         return 0
     if student.role != 'student':
-        print(f"[AUTO-ENROLL] SKIP: user {student_id} role='{student.role}' is not student")
+        print(f"[AUTO-ENROLL] SKIP: id={student_id} role='{student.role}'")
         return 0
 
-    print(f"[AUTO-ENROLL] Student -> id={student.id} | name='{student.full_name}'")
-    print(f"[AUTO-ENROLL]   class_year='{student.class_year}' | section='{student.section}' | college_id='{student.college_id}'")
+    print(f"[AUTO-ENROLL] Student: id={student.id} name='{student.full_name}'")
+    print(f"[AUTO-ENROLL]   class_year='{student.class_year}' section='{student.section}' college_id='{student.college_id}'")
 
-    # --- Profile completeness check ---
+    # --- Profile completeness ---
     if not all([student.class_year, student.section, student.college_id]):
-        print(f"[AUTO-ENROLL] SKIP: profile incomplete - missing class_year/section/college_id")
+        print(f"[AUTO-ENROLL] SKIP: profile incomplete")
         return 0
 
-    # --- Normalize: strip + lowercase for case-insensitive match ---
-    # Root cause fix: SQLite filter_by is case-sensitive, so '1st year' != '1ST YEAR'
-    s_class_year = student.class_year.strip().lower()
-    s_section    = student.section.strip().lower()
-    s_college_id = student.college_id.strip().lower()
+    # --- Normalize for case-insensitive match ---
+    s_year     = student.class_year.strip().lower()
+    s_section  = student.section.strip().lower()
+    s_college  = student.college_id.strip().lower()
 
-    print(f"[AUTO-ENROLL] Normalized -> class_year='{s_class_year}' | section='{s_section}' | college_id='{s_college_id}'")
+    print(f"[AUTO-ENROLL] Normalized: year='{s_year}' section='{s_section}' college='{s_college}'")
 
-    # --- Fetch all classrooms, filter in Python to avoid SQLite case issues ---
-    all_classrooms = Classroom.query.all()
+    # --- Fetch fresh classrooms from DB ---
+    all_classrooms = db.session.query(Classroom).all()
     print(f"[AUTO-ENROLL] Total classrooms in DB: {len(all_classrooms)}")
     for c in all_classrooms:
-        print(f"[AUTO-ENROLL]   DB classroom id={c.id} | class_year='{c.class_year}' | section='{c.section}' | college_id='{c.college_id}'")
+        print(f"[AUTO-ENROLL]   id={c.id} year='{c.class_year}' sec='{c.section}' college='{c.college_id}' subject='{c.subject}'")
 
-    matching_classrooms = [
+    # --- Python-level case-insensitive filter ---
+    matching = [
         c for c in all_classrooms
-        if c.class_year.strip().lower()  == s_class_year
-        and c.section.strip().lower()    == s_section
-        and c.college_id.strip().lower() == s_college_id
+        if c.class_year.strip().lower() == s_year
+        and c.section.strip().lower()   == s_section
+        and c.college_id.strip().lower() == s_college
     ]
 
-    print(f"[AUTO-ENROLL] Matching classrooms: {len(matching_classrooms)}")
-    if not matching_classrooms:
-        print(f"[AUTO-ENROLL] NO MATCH - verify teacher used same class_year/section/college_id values")
+    print(f"[AUTO-ENROLL] Matching classrooms: {len(matching)}")
+    if not matching:
+        print(f"[AUTO-ENROLL] NO MATCH - teacher values vs student values upar dekho")
         return 0
 
-    # --- Enroll, skip duplicates ---
+    # --- Insert enrollments, skip duplicates ---
     enrolled_count = 0
-    for classroom in matching_classrooms:
-        print(f"[AUTO-ENROLL]   Checking classroom id={classroom.id} subject='{classroom.subject}'")
-        already_enrolled = Enrollment.query.filter_by(
+    for classroom in matching:
+        exists = db.session.query(Enrollment).filter_by(
             student_id=student.id,
             classroom_id=classroom.id
         ).first()
 
-        if already_enrolled:
-            print(f"[AUTO-ENROLL]   SKIP (already enrolled): classroom_id={classroom.id}")
+        if exists:
+            print(f"[AUTO-ENROLL]   SKIP (duplicate): classroom_id={classroom.id}")
         else:
             db.session.add(Enrollment(
                 student_id=student.id,
                 classroom_id=classroom.id
             ))
             enrolled_count += 1
-            print(f"[AUTO-ENROLL]   ENROLLED: student_id={student.id} -> classroom_id={classroom.id}")
+            print(f"[AUTO-ENROLL]   ENROLLED: student={student.id} -> classroom={classroom.id}")
 
     try:
         db.session.commit()
-        print(f"[AUTO-ENROLL] DONE: {enrolled_count} new enrollment(s) committed")
+        print(f"[AUTO-ENROLL] COMMITTED: {enrolled_count} new enrollment(s)")
     except Exception as e:
         db.session.rollback()
-        print(f"[AUTO-ENROLL] DB COMMIT ERROR: {e}")
+        print(f"[AUTO-ENROLL] COMMIT ERROR: {e}")
         return 0
 
     return enrolled_count
@@ -120,8 +121,11 @@ def login():
         if user and user.password == password:
             login_user(user)
             if user.role == 'student':
-                print(f"[LOGIN] Student login: id={user.id} | email='{user.email}'")
+                print(f"[LOGIN] Student: id={user.id} email='{user.email}'")
+                # Session expire karo taake fresh data mile
+                db.session.expire_all()
                 enrolled_count = auto_enroll_student(user.id)
+                print(f"[LOGIN] auto_enroll result: {enrolled_count} new enrollments")
                 if enrolled_count > 0:
                     flash(f'Welcome! {enrolled_count} new classroom(s) mein enroll ho gaye.', 'success')
                 else:
@@ -303,17 +307,18 @@ def create_classroom():
         db.session.commit()
         print(f"[CREATE-CLASSROOM] Classroom saved → id: {classroom.id}")
 
-        # 4. Matching students: case-insensitive filter in Python
-        all_students = User.query.filter_by(role='student').all()
+        # 4. Matching students: case-insensitive, fresh query
+        db.session.expire_all()
+        all_students = db.session.query(User).filter_by(role='student').all()
         matching_students = [
             s for s in all_students
-            if (s.class_year or '').strip().lower()  == class_year.lower()
-            and (s.section or '').strip().lower()    == section.lower()
+            if (s.class_year  or '').strip().lower() == class_year.lower()
+            and (s.section    or '').strip().lower() == section.lower()
             and (s.college_id or '').strip().lower() == college_id.lower()
         ]
-        print(f"[CREATE-CLASSROOM] Matching students found: {len(matching_students)}")
+        print(f"[CREATE-CLASSROOM] Matching students: {len(matching_students)}")
         for s in matching_students:
-            print(f"[CREATE-CLASSROOM]   -> student id={s.id} name='{s.full_name}'")
+            print(f"[CREATE-CLASSROOM]   -> id={s.id} name='{s.full_name}'")
 
         for student in matching_students:
             auto_enroll_student(student.id)
@@ -334,12 +339,14 @@ def create_classroom():
 def student_index():
     if current_user.role != 'student':
         return redirect(url_for('teacher_dashboard'))
-    classrooms = (
-        db.session.query(Classroom)
-        .join(Enrollment, Enrollment.classroom_id == Classroom.id)
-        .filter(Enrollment.student_id == current_user.id)
-        .all()
-    )
+    # expire_all: session cache clear karo, fresh DB read
+    db.session.expire_all()
+    enrollments = db.session.query(Enrollment).filter_by(student_id=current_user.id).all()
+    print(f"[STUDENT-INDEX] student_id={current_user.id} | enrollments found: {len(enrollments)}")
+    classroom_ids = [e.classroom_id for e in enrollments]
+    print(f"[STUDENT-INDEX] classroom_ids: {classroom_ids}")
+    classrooms = db.session.query(Classroom).filter(Classroom.id.in_(classroom_ids)).all()
+    print(f"[STUDENT-INDEX] classrooms returned: {[c.subject for c in classrooms]}")
     return render_template('student_templates/index.html', classrooms=classrooms, active_page='student_index', user=current_user)
 
 
@@ -348,12 +355,10 @@ def student_index():
 def analysis():
     if current_user.role != 'student':
         return redirect(url_for('teacher_dashboard'))
-    classrooms = (
-        db.session.query(Classroom)
-        .join(Enrollment, Enrollment.classroom_id == Classroom.id)
-        .filter(Enrollment.student_id == current_user.id)
-        .all()
-    )
+    db.session.expire_all()
+    enrollments = db.session.query(Enrollment).filter_by(student_id=current_user.id).all()
+    classroom_ids = [e.classroom_id for e in enrollments]
+    classrooms = db.session.query(Classroom).filter(Classroom.id.in_(classroom_ids)).all()
     return render_template('student_templates/student_analysis.html', classrooms=classrooms, active_page='analysis', user=current_user)
 
 
@@ -443,22 +448,17 @@ def create_account():
 @app.route('/my-classrooms', methods=['GET'])
 @login_required
 def my_classrooms():
-    # Sirf student access kar sakta hai
     if current_user.role != 'student':
         return jsonify({'error': 'Unauthorized'}), 403
 
     try:
-        # SQL:
-        #   SELECT classrooms.id, subject, class_year, section, teacher_id
-        #   FROM enrollments
-        #   JOIN classrooms ON enrollments.classroom_id = classrooms.id
-        #   WHERE enrollments.student_id = ?
-        classrooms = (
-            db.session.query(Classroom)
-            .join(Enrollment, Enrollment.classroom_id == Classroom.id)
-            .filter(Enrollment.student_id == current_user.id)
-            .all()
-        )
+        db.session.expire_all()
+        enrollments = db.session.query(Enrollment).filter_by(student_id=current_user.id).all()
+        print(f"[MY-CLASSROOMS] student_id={current_user.id} | enrollments: {len(enrollments)}")
+
+        classroom_ids = [e.classroom_id for e in enrollments]
+        classrooms = db.session.query(Classroom).filter(Classroom.id.in_(classroom_ids)).all()
+        print(f"[MY-CLASSROOMS] classrooms returned: {len(classrooms)}")
 
         result = [
             {
@@ -470,10 +470,10 @@ def my_classrooms():
             }
             for c in classrooms
         ]
-
         return jsonify(result), 200
 
-    except Exception:
+    except Exception as e:
+        print(f"[MY-CLASSROOMS] ERROR: {e}")
         return jsonify({'error': 'Something went wrong'}), 500
 
 
