@@ -51,6 +51,7 @@ class Classroom(db.Model):
     
     # Relationships
     enrollments = db.relationship('Enrollment', backref='classroom', lazy=True, cascade='all, delete-orphan')
+    roadmaps    = db.relationship('Roadmap', backref='classroom', lazy=True, cascade='all, delete-orphan')
 
     def __repr__(self):
         return f"<Classroom {self.class_year} {self.section} - {self.subject}>"
@@ -84,3 +85,41 @@ Idx_classroom_match = Index(
     Classroom.section,
     Classroom.college_id
 )
+
+
+# ============================================
+# TABLE 4: ROADMAP (Teacher creates study plan per classroom)
+# ============================================
+class Roadmap(db.Model):
+    __tablename__ = 'roadmaps'
+
+    id           = db.Column(db.Integer, primary_key=True)
+    classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)
+    title        = db.Column(db.String(200), nullable=False)   # e.g. "Physics Chapter 1 Plan"
+    description  = db.Column(db.Text, nullable=True)
+    start_date   = db.Column(db.Date, nullable=True)
+    end_date     = db.Column(db.Date, nullable=True)
+    created_at   = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # One roadmap → many items
+    items = db.relationship('RoadmapItem', backref='roadmap', lazy=True, cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f"<Roadmap '{self.title}' classroom={self.classroom_id}>"
+
+
+# ============================================
+# TABLE 5: ROADMAP ITEMS (Daily tasks inside a roadmap)
+# ============================================
+class RoadmapItem(db.Model):
+    __tablename__ = 'roadmap_items'
+
+    id             = db.Column(db.Integer, primary_key=True)
+    roadmap_id     = db.Column(db.Integer, db.ForeignKey('roadmaps.id'), nullable=False)
+    day_number     = db.Column(db.Integer, nullable=False)       # Day 1, Day 2 ...
+    topic          = db.Column(db.String(200), nullable=False)
+    description    = db.Column(db.Text, nullable=True)
+    estimated_time = db.Column(db.String(50), nullable=True)     # e.g. "2 hours"
+
+    def __repr__(self):
+        return f"<RoadmapItem Day {self.day_number}: '{self.topic}'>"
