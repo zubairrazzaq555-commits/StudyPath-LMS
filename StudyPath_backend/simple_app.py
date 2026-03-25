@@ -498,24 +498,71 @@ def teacher_classrooms_api():
 
 
 # ============================================
+# TEST SETUP (development only)
+# ============================================
+def setup_test_users():
+    """
+    Ensure test accounts exist with matching college_id/class_year/section
+    so auto-enrollment works without any manual setup.
+    """
+    # Shared values — teacher aur student dono same hone chahiye
+    TEST_COLLEGE   = 'SMIU001'
+    TEST_CLASS     = '1st year'
+    TEST_SECTION   = 'A'
+
+    # --- Teacher ---
+    teacher = User.query.filter_by(email='zubairahmad234ph@gmail.com').first()
+    if teacher:
+        teacher.college_id = TEST_COLLEGE
+        teacher.class_year = TEST_CLASS
+        teacher.section    = TEST_SECTION
+        print(f"[SETUP] Teacher updated: college_id='{TEST_COLLEGE}'")
+    else:
+        teacher = User(
+            email='zubairahmad234ph@gmail.com',
+            password='teacher123',
+            full_name='Zubair Ahmad',
+            role='teacher',
+            college_id=TEST_COLLEGE,
+            class_year=TEST_CLASS,
+            section=TEST_SECTION
+        )
+        db.session.add(teacher)
+        print(f"[SETUP] Teacher created: zubairahmad234ph@gmail.com / teacher123")
+
+    # --- Student ---
+    student = User.query.filter_by(email='zubairazam555@gmail.com').first()
+    if student:
+        student.college_id = TEST_COLLEGE
+        student.class_year = TEST_CLASS
+        student.section    = TEST_SECTION
+        print(f"[SETUP] Student updated: college_id='{TEST_COLLEGE}'")
+    else:
+        student = User(
+            email='zubairazam555@gmail.com',
+            password='student123',
+            full_name='Zubair Azam',
+            role='student',
+            roll_number='2024-CS-001',
+            college_id=TEST_COLLEGE,
+            class_year=TEST_CLASS,
+            section=TEST_SECTION
+        )
+        db.session.add(student)
+        print(f"[SETUP] Student created: zubairazam555@gmail.com / student123")
+
+    db.session.commit()
+    print(f"[SETUP] Both accounts ready — college_id='{TEST_COLLEGE}' class_year='{TEST_CLASS}' section='{TEST_SECTION}'")
+
+
+# ============================================
 # MAIN
 # ============================================
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        
-        if not User.query.filter_by(email='zubairahmad234ph@gmail.com').first():
-            teacher = User(email='zubairahmad234ph@gmail.com', password='teacher123', full_name='Zubair Ahmad', role='teacher')
-            db.session.add(teacher)
-            print("✅ Teacher: zubairahmad234ph@gmail.com / teacher123")
-        
-        if not User.query.filter_by(email='zubairazam555@gmail.com').first():
-            student = User(email='zubairazam555@gmail.com', password='student123', full_name='Zubair Azam', role='student', roll_number='2024-CS-001', class_year='1st year', section='A', college_id='SMIU001')
-            db.session.add(student)
-            print("✅ Student: zubairazam555@gmail.com / student123")
-        
-        db.session.commit()
-    
+        setup_test_users()
+
     print("\n🎯 TEST ACCOUNTS:")
     print("📚 Teacher: zubairahmad234ph@gmail.com / teacher123")
     print("🎓 Student: zubairazam555@gmail.com / student123")
