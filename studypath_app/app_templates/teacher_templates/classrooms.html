@@ -192,11 +192,11 @@
                     class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"/>
             </div>
 
-            <!-- College ID -->
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">College ID</label>
-                <input id="field-college_id" type="text" placeholder="e.g. SMIU001"
-                    class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"/>
+            <!-- College ID: auto from teacher profile, not editable -->
+            <div class="p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-slate-400">domain</span>
+                <span class="text-xs text-slate-500">College ID:</span>
+                <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ user.college_id or 'Not set — update your profile first' }}</span>
             </div>
 
             <!-- Error message -->
@@ -318,10 +318,9 @@
         const subject    = document.getElementById('field-subject').value.trim();
         const class_year = document.getElementById('field-class_year').value.trim();
         const section    = document.getElementById('field-section').value.trim();
-        const college_id = document.getElementById('field-college_id').value.trim();
 
-        // Client-side validation
-        if (!subject || !class_year || !section || !college_id) {
+        // college_id backend se teacher profile se aata hai
+        if (!subject || !class_year || !section) {
             showError('Please fill in all fields.');
             return;
         }
@@ -336,14 +335,14 @@
             const res = await fetch('/create-classroom', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ subject, class_year, section, college_id })
+                body: JSON.stringify({ subject, class_year, section })
             });
 
             const data = await res.json();
 
             if (res.status === 201) {
                 closeModal();
-                addClassroomCard({ subject, class_year, section, college_id, id: data.classroom_id });
+                addClassroomCard({ subject, class_year, section, college_id: data.college_id, id: data.classroom_id });
                 showToast('Classroom created successfully!', true);
             } else {
                 showError(data.error || 'Something went wrong. Try again.');

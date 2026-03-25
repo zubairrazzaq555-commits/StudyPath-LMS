@@ -266,35 +266,27 @@ def teacher_quiz_factory():
 @app.route('/create-classroom', methods=['POST'])
 @login_required
 def create_classroom():
-    # DEBUG: Step 1 - user check
-    print(f"[CREATE-CLASSROOM] user: {current_user.id} | role: {current_user.role}")
-
-    # 1. Sirf teacher hi classroom bana sakta hai
     if current_user.role != 'teacher':
-        print(f"[CREATE-CLASSROOM] BLOCKED - not a teacher")
-        return jsonify({'error': 'Invalid data or unauthorized'}), 403
+        return jsonify({'error': 'Unauthorized'}), 403
 
-    # DEBUG: Step 2 - request data check
-    json_data = request.get_json(silent=True)
-    form_data = request.form
-    print(f"[CREATE-CLASSROOM] JSON data: {json_data}")
-    print(f"[CREATE-CLASSROOM] Form data: {form_data.to_dict()}")
-
-    data = json_data or form_data
+    data = request.get_json(silent=True) or request.form
 
     class_year = (data.get('class_year') or '').strip()
     section    = (data.get('section')    or '').strip()
     subject    = (data.get('subject')    or '').strip()
-    college_id = (data.get('college_id') or '').strip()
 
-    print(f"[CREATE-CLASSROOM] Parsed → class_year='{class_year}' section='{section}' subject='{subject}' college_id='{college_id}'")
+    # college_id: teacher ke profile se lo — form input ignore karo
+    # Yeh fix karta hai mismatch bug: teacher 'sd3456' type kare, student 'SMIU001' ho
+    college_id = (current_user.college_id or '').strip()
 
-    # 2. Validation: koi field empty na ho
-    if not all([class_year, section, subject, college_id]):
-        print(f"[CREATE-CLASSROOM] VALIDATION FAILED - missing fields")
-        return jsonify({'error': 'All fields are required'}), 400
+    print(f"[CREATE-CLASSROOM] teacher_id={current_user.id} | class_year='{class_year}' section='{section}' subject='{subject}' college_id='{college_id}'")
 
-    # 3. Classroom insert + students enroll (ek transaction mein)
+    if not all([class_year, section, subject]):
+        return jsonify({'error': 'class_year, section aur subject required hain'}), 400
+
+    if not college_id:
+        return jsonify({'error': 'Aapke teacher profile mein college_id set nahi hai. Pehle profile update karein.'}), 400
+
     try:
         classroom = Classroom(
             teacher_id=current_user.id,
@@ -305,9 +297,9 @@ def create_classroom():
         )
         db.session.add(classroom)
         db.session.commit()
-        print(f"[CREATE-CLASSROOM] Classroom saved → id: {classroom.id}")
+        print(f"[CREATE-CLASSROOM] Saved: id={classroom.id} college_id='{college_id}'")
 
-        # 4. Matching students: case-insensitive, fresh query
+        # Matching students: case-insensitive
         db.session.expire_all()
         all_students = db.session.query(User).filter_by(role='student').all()
         matching_students = [
@@ -318,17 +310,14 @@ def create_classroom():
         ]
         print(f"[CREATE-CLASSROOM] Matching students: {len(matching_students)}")
         for s in matching_students:
-            print(f"[CREATE-CLASSROOM]   -> id={s.id} name='{s.full_name}'")
-
-        for student in matching_students:
-            auto_enroll_student(student.id)
+            auto_enroll_student(s.id)
 
     except Exception as e:
         db.session.rollback()
         print(f"[CREATE-CLASSROOM] DB ERROR: {e}")
         return jsonify({'error': 'Something went wrong'}), 500
 
-    return jsonify({'message': 'Classroom created successfully', 'classroom_id': classroom.id}), 201
+    return jsonify({'message': 'Classroom created successfully', 'classroom_id': classroom.id, 'college_id': college_id}), 201
 
 
 # ============================================
