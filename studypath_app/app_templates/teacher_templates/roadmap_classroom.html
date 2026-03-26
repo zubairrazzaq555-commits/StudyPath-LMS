@@ -377,116 +377,180 @@ Create Roadmap
 
 <!-- Create Roadmap Modal -->
 <div id="roadmapModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-<div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full">
+<div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
 <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-<h3 class="font-display text-xl font-bold text-slate-900 dark:text-white">Generate AI Roadmap</h3>
+<h3 class="font-display text-xl font-bold text-slate-900 dark:text-white">Create Roadmap</h3>
 <button onclick="closeRoadmapModal()" class="text-slate-400 hover:text-slate-600">
 <span class="material-symbols-outlined">close</span>
 </button>
 </div>
-<div class="p-6">
-<div class="space-y-4">
-<div>
-<label class="text-sm font-bold text-slate-600 dark:text-slate-400 mb-2 block">Select Class/Grade</label>
-<select id="gradeSelect" class="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20">
-<option value="11">11th Class (First Year)</option>
-<option value="12">12th Class (Second Year)</option>
-</select>
-</div>
-<div>
-<label class="text-sm font-bold text-slate-600 dark:text-slate-400 mb-2 block">Course Start Date</label>
-<input id="startDate" type="date" class="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20"/>
-</div>
-<div>
-<label class="text-sm font-bold text-slate-600 dark:text-slate-400 mb-2 block">Course End Date</label>
-<input id="endDate" type="date" class="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20"/>
-</div>
-<p class="text-xs text-slate-500">AI will create timeline for all chapters from your indexed {{ subject }} books</p>
-</div>
-<div id="loadingIndicator" class="hidden mt-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-center">
-<div class="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-2"></div>
-<p class="text-sm font-bold text-emerald-600 dark:text-emerald-400">AI is analyzing your books and creating timeline...</p>
-</div>
-<div class="flex gap-4 mt-6">
-<button onclick="closeRoadmapModal()" class="flex-1 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg font-bold hover:bg-slate-200 transition-all">Cancel</button>
-<button onclick="generateRoadmap()" class="flex-1 py-3 bg-primary text-white rounded-lg font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-sm">auto_awesome</span>
-Generate Timeline
-</button>
-</div>
+<div class="p-6 space-y-4">
+
+    <!-- Title -->
+    <div>
+        <label class="text-sm font-bold text-slate-600 dark:text-slate-400 mb-1 block">Roadmap Title *</label>
+        <input id="rmTitle" type="text" placeholder="e.g. Physics Chapter 1 Plan"
+            class="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"/>
+    </div>
+
+    <!-- Description -->
+    <div>
+        <label class="text-sm font-bold text-slate-600 dark:text-slate-400 mb-1 block">Description</label>
+        <textarea id="rmDesc" rows="2" placeholder="Optional description"
+            class="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"></textarea>
+    </div>
+
+    <!-- Dates -->
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="text-sm font-bold text-slate-600 dark:text-slate-400 mb-1 block">Start Date</label>
+            <input id="rmStartDate" type="date"
+                class="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"/>
+        </div>
+        <div>
+            <label class="text-sm font-bold text-slate-600 dark:text-slate-400 mb-1 block">End Date</label>
+            <input id="rmEndDate" type="date"
+                class="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"/>
+        </div>
+    </div>
+
+    <!-- Items -->
+    <div>
+        <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-bold text-slate-600 dark:text-slate-400">Daily Tasks *</label>
+            <button type="button" onclick="addItem()"
+                class="text-xs font-bold text-primary flex items-center gap-1 hover:underline">
+                <span class="material-symbols-outlined text-sm">add</span> Add Day
+            </button>
+        </div>
+        <div id="itemsContainer" class="space-y-3">
+            <!-- items added dynamically -->
+        </div>
+    </div>
+
+    <!-- Error -->
+    <p id="rmError" class="hidden text-red-500 text-xs font-semibold"></p>
+
+    <!-- Buttons -->
+    <div class="flex gap-4 pt-2">
+        <button onclick="closeRoadmapModal()" class="flex-1 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 rounded-lg font-bold hover:bg-slate-200 transition-all">Cancel</button>
+        <button onclick="submitRoadmap()" id="rmSubmitBtn" class="flex-1 py-3 bg-primary text-white rounded-lg font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-sm">save</span>
+            <span id="rmSubmitText">Save Roadmap</span>
+        </button>
+    </div>
 </div>
 </div>
 </div>
 
 <script>
 const currentSubject = '{{ subject }}';
+const currentClassroomId = {{ classroom_id if classroom_id else 'null' }};
+
+let itemCount = 0;
 
 function openRoadmapModal() {
-document.getElementById('roadmapModal').classList.remove('hidden');
-// Set default dates
-const today = new Date();
-const endDate = new Date(today);
-endDate.setMonth(endDate.getMonth() + 6);
-document.getElementById('startDate').value = today.toISOString().split('T')[0];
-document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+    document.getElementById('roadmapModal').classList.remove('hidden');
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('rmStartDate').value = today;
+    if (itemCount === 0) addItem(); // default 1 item
 }
 
 function closeRoadmapModal() {
-document.getElementById('roadmapModal').classList.add('hidden');
-document.getElementById('loadingIndicator').classList.add('hidden');
+    document.getElementById('roadmapModal').classList.add('hidden');
+    document.getElementById('rmError').classList.add('hidden');
 }
 
-async function generateRoadmap() {
-const grade = document.getElementById('gradeSelect').value;
-const startDate = document.getElementById('startDate').value;
-const endDate = document.getElementById('endDate').value;
-
-if (!startDate || !endDate) {
-alert('Please select both start and end dates');
-return;
+function addItem() {
+    itemCount++;
+    const container = document.getElementById('itemsContainer');
+    const div = document.createElement('div');
+    div.className = 'p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2';
+    div.id = `item-${itemCount}`;
+    div.innerHTML = `
+        <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-primary">Day ${itemCount}</span>
+            <button type="button" onclick="removeItem(${itemCount})" class="text-slate-400 hover:text-red-500">
+                <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+        </div>
+        <input type="text" placeholder="Topic *" data-day="${itemCount}" data-field="topic"
+            class="w-full p-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded text-sm focus:border-primary outline-none"/>
+        <div class="grid grid-cols-2 gap-2">
+            <input type="text" placeholder="Description" data-day="${itemCount}" data-field="description"
+                class="p-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded text-sm focus:border-primary outline-none"/>
+            <input type="text" placeholder="Est. time (e.g. 2 hours)" data-day="${itemCount}" data-field="estimated_time"
+                class="p-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded text-sm focus:border-primary outline-none"/>
+        </div>
+    `;
+    container.appendChild(div);
 }
 
-if (new Date(startDate) >= new Date(endDate)) {
-alert('End date must be after start date');
-return;
+function removeItem(n) {
+    const el = document.getElementById(`item-${n}`);
+    if (el) el.remove();
 }
 
-document.getElementById('loadingIndicator').classList.remove('hidden');
+async function submitRoadmap() {
+    const title      = document.getElementById('rmTitle').value.trim();
+    const desc       = document.getElementById('rmDesc').value.trim();
+    const start_date = document.getElementById('rmStartDate').value;
+    const end_date   = document.getElementById('rmEndDate').value;
 
-try {
-const response = await fetch('/create-roadmap', {
-method: 'POST',
-headers: {'Content-Type': 'application/json'},
-body: JSON.stringify({ 
-subject: currentSubject,
-grade: grade,
-start_date: startDate,
-end_date: endDate
-})
-});
+    if (!title) { showRmError('Title required hai.'); return; }
+    if (!currentClassroomId) { showRmError('Classroom ID missing. URL check karein.'); return; }
 
-if (!response.ok) {
-throw new Error('Server returned ' + response.status);
+    // Collect items
+    const items = [];
+    document.querySelectorAll('#itemsContainer [data-field="topic"]').forEach(input => {
+        const day = parseInt(input.dataset.day);
+        const topic = input.value.trim();
+        if (!topic) return;
+        const desc_el = document.querySelector(`#item-${day} [data-field="description"]`);
+        const time_el = document.querySelector(`#item-${day} [data-field="estimated_time"]`);
+        items.push({
+            day_number:     day,
+            topic:          topic,
+            description:    desc_el ? desc_el.value.trim() : '',
+            estimated_time: time_el ? time_el.value.trim() : ''
+        });
+    });
+
+    if (items.length === 0) { showRmError('Kam az kam ek daily task add karein.'); return; }
+
+    const btn = document.getElementById('rmSubmitBtn');
+    document.getElementById('rmSubmitText').textContent = 'Saving...';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch('/create-roadmap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ classroom_id: currentClassroomId, title, description: desc, start_date, end_date, items })
+        });
+        const data = await res.json();
+        if (res.status === 201) {
+            closeRoadmapModal();
+            location.reload();
+        } else {
+            showRmError(data.error || 'Something went wrong.');
+        }
+    } catch (e) {
+        showRmError('Network error.');
+    } finally {
+        document.getElementById('rmSubmitText').textContent = 'Save Roadmap';
+        btn.disabled = false;
+    }
 }
 
-const data = await response.json();
-
-if (data.status === 'success' || data.status === 'exists') {
-alert('Roadmap timeline created successfully!');
-location.reload();
-} else {
-alert('Error: ' + (data.error || 'Unknown error'));
-}
-} catch (error) {
-console.error('Roadmap generation error:', error);
-alert('Error generating roadmap: ' + error.message);
-} finally {
-document.getElementById('loadingIndicator').classList.add('hidden');
-}
+function showRmError(msg) {
+    const el = document.getElementById('rmError');
+    el.textContent = msg;
+    el.classList.remove('hidden');
 }
 
 function viewRoadmap(id) {
-window.location.href = `/roadmap/${id}`;
+    window.location.href = `/roadmap/${id}`;
 }
 </script>
 </body></html>

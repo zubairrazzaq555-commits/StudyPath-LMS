@@ -233,7 +233,17 @@ def teacher_roadmap(subject):
     if current_user.role != 'teacher':
         flash('Access denied. Teacher area only.', 'danger')
         return redirect(url_for('login'))
-    return render_template('teacher_templates/roadmap_classroom.html', subject=subject, active_page='teacher_dashboard', user=current_user)
+    # classroom_id query param se lo (e.g. /teacher/roadmap/Physics?classroom_id=1)
+    classroom_id = request.args.get('classroom_id', type=int)
+    roadmaps = []
+    if classroom_id:
+        roadmaps = Roadmap.query.filter_by(classroom_id=classroom_id).order_by(Roadmap.created_at.desc()).all()
+    return render_template('teacher_templates/roadmap_classroom.html',
+                           subject=subject,
+                           classroom_id=classroom_id,
+                           roadmaps=roadmaps,
+                           active_page='teacher_dashboard',
+                           user=current_user)
 
 
 @app.route('/teacher/student-progress')
