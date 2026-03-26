@@ -469,18 +469,11 @@ def my_classrooms():
 @app.route('/teacher-classrooms', methods=['GET'])
 @login_required
 def teacher_classrooms_api():
-    # 1. Sirf teacher access kar sakta hai
     if current_user.role != 'teacher':
         return jsonify({'error': 'Unauthorized'}), 403
 
     try:
-        # 2. SQL:
-        #   SELECT id, subject, class_year, section
-        #   FROM classrooms
-        #   WHERE teacher_id = ?
         classrooms = Classroom.query.filter_by(teacher_id=current_user.id).all()
-
-        # 3. Koi classroom nahi to empty array
         result = [
             {
                 'classroom_id': c.id,
@@ -490,11 +483,92 @@ def teacher_classrooms_api():
             }
             for c in classrooms
         ]
-
         return jsonify(result), 200
-
     except Exception:
         return jsonify({'error': 'Something went wrong'}), 500
+
+
+@app.route('/create-roadmap', methods=['POST'])
+@login_required
+def create_roadmap():
+    if current_user.role != 'teacher':
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({'error': 'JSON body required'}), 400
+
+    classroom_id = data.get('classroom_id')
+    title        = (data.get('title') or '').strip()
+    description  = (data.get('description') or '').strip()
+    start_date   = data.get('start_date')   # 'YYYY-MM-DD' string
+    end_date     = data.get('end_date')     # 'YYYY-MM-DD' string
+    items        = data.get('items', [])
+
+    # --- Validation ---
+    if not classroom_id or not title:
+        return jsonify({'error': 'classroom_id aur title required hain'}), 400
+
+    # Classroom exist karta hai?
+    classroom = Classroom.query.get(classroom_id)
+    if not classroom:
+        return jsonify({'error': 'Classroom not found'}), 400
+
+    # Teacher ka hi classroom hona chahiye
+    if classroom.teacher_id != current_user.id:
+        return jsonify({'error': 'Aap sirf apne classroom ka roadmap bana sakte hain'}), 403
+
+    # --- Parse dates ---
+    from datetime import date
+    try:
+        parsed_start = date.fromisoformat(start_date) if start_date else None
+        parsed_end   = date.fromisoformat(end_date)   if end_date   else None
+    except ValueError:
+        return jsonify({'error': 'Date format galat hai. Use YYYY-MM-DD'}), 400
+
+    try:
+        # --- Create Roadmap ---
+        roadmap = Roadmap(
+            classroom_id=classroom_id,
+            title=title,
+            description=description or None,
+            start_date=parsed_start,
+            end_date=parsed_end
+        )
+        db.session.add(roadmap)
+        db.session.flush()  # roadmap.id mil jaye items insert karne se pehle
+
+        print(f"[CREATE-ROADMAP] roadmap_id={roadmap.id} classroom_id={classroom_id} title='{title}'")
+
+        # --- Insert RoadmapItems ---
+        for item in items:
+            day_number     = item.get('day_number')
+            topic          = (item.get('topic') or '').strip()
+            item_desc      = (item.get('description') or '').strip()
+            estimated_time = (item.get('estimated_time') or '').strip()
+
+            if not day_number or not topic:
+                db.session.rollback()
+                return jsonify({'error': f'Item mein day_number aur topic required hain'}), 400
+
+            db.session.add(RoadmapItem(
+                roadmap_id=roadmap.id,
+                day_number=day_number,
+                topic=topic,
+                description=item_desc or None,
+                estimated_time=estimated_time or None
+            ))
+            print(f"[CREATE-ROADMAP]   Day {day_number}: '{topic}'")
+
+        db.session.commit()
+        print(f"[CREATE-ROADMAP] DONE: {len(items)} item(s) committed")
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"[CREATE-ROADMAP] DB ERROR: {e}")
+        return jsonify({'error': 'Something went wrong'}), 500
+
+    return jsonify({'message': 'Roadmap created successfully', 'roadmap_id': roadmap.id}), 201
 
 
 # ============================================
@@ -563,8 +637,8 @@ if __name__ == '__main__':
         db.create_all()
         setup_test_users()
 
-    print("\n🎯 TEST ACCOUNTS:")
-    print("📚 Teacher: zubairahmad234ph@gmail.com / teacher123")
-    print("🎓 Student: zubairazam555@gmail.com / student123")
-    print("\n🚀 Server: http://127.0.0.1:5000\n")
+    print("\nTEST ACCOUNTS:")
+    print("Teacher: zubairahmad234ph@gmail.com / teacher123")
+    print("Student: zubairazam555@gmail.com / student123")
+    print("\nServer: http://127.0.0.1:5000\n")
     app.run(debug=True, port=5000)
