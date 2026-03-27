@@ -250,27 +250,57 @@ def teacher_roadmap(subject):
 @login_required
 def teacher_student_progress():
     if current_user.role != 'teacher':
-        flash('Access denied. Teacher area only.', 'danger')
+        flash('Access denied.', 'danger')
         return redirect(url_for('login'))
-    return render_template('teacher_templates/student_progress_classroom.html', active_page='teacher_student_progress', user=current_user)
+    classroom_id = request.args.get('classroom_id', type=int)
+    classroom = None
+    enrolled_students = []
+    if classroom_id:
+        classroom = Classroom.query.filter_by(id=classroom_id, teacher_id=current_user.id).first()
+        if classroom:
+            enrollments = Enrollment.query.filter_by(classroom_id=classroom_id).all()
+            student_ids = [e.student_id for e in enrollments]
+            enrolled_students = User.query.filter(User.id.in_(student_ids)).all()
+    return render_template('teacher_templates/student_progress_classroom.html',
+                           classroom=classroom,
+                           classroom_id=classroom_id,
+                           enrolled_students=enrolled_students,
+                           active_page='teacher_student_progress',
+                           user=current_user)
 
 
 @app.route('/teacher/knowledge-dashboard')
 @login_required
 def teacher_knowledge_dashboard():
     if current_user.role != 'teacher':
-        flash('Access denied. Teacher area only.', 'danger')
+        flash('Access denied.', 'danger')
         return redirect(url_for('login'))
-    return render_template('teacher_templates/knowledge_classroom_dashboard.html', active_page='teacher_knowledge_dashboard', user=current_user)
+    classroom_id = request.args.get('classroom_id', type=int)
+    classroom = None
+    if classroom_id:
+        classroom = Classroom.query.filter_by(id=classroom_id, teacher_id=current_user.id).first()
+    return render_template('teacher_templates/knowledge_classroom_dashboard.html',
+                           classroom=classroom,
+                           classroom_id=classroom_id,
+                           active_page='teacher_knowledge_dashboard',
+                           user=current_user)
 
 
 @app.route('/teacher/quiz-factory')
 @login_required
 def teacher_quiz_factory():
     if current_user.role != 'teacher':
-        flash('Access denied. Teacher area only.', 'danger')
+        flash('Access denied.', 'danger')
         return redirect(url_for('login'))
-    return render_template('teacher_templates/quiz_classroom.html', active_page='teacher_quiz_factory', user=current_user)
+    classroom_id = request.args.get('classroom_id', type=int)
+    classroom = None
+    if classroom_id:
+        classroom = Classroom.query.filter_by(id=classroom_id, teacher_id=current_user.id).first()
+    return render_template('teacher_templates/quiz_classroom.html',
+                           classroom=classroom,
+                           classroom_id=classroom_id,
+                           active_page='teacher_quiz_factory',
+                           user=current_user)
 
 
 @app.route('/create-classroom', methods=['POST'])

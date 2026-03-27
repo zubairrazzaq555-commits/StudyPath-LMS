@@ -141,25 +141,38 @@ Create New Roadmap
 <div id="roadmapContainer">
 {% if roadmaps %}
 {% for roadmap in roadmaps %}
-<div class="relative flex gap-8 mb-12 group">
-<div class="relative z-10 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white ring-8 ring-white dark:ring-background-dark">
-<span class="material-symbols-outlined">check</span>
+<div class="relative flex gap-8 mb-8 group">
+<div class="relative z-10 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white ring-8 ring-white dark:ring-background-dark flex-shrink-0">
+<span class="material-symbols-outlined">route</span>
 </div>
 <div class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm group-hover:shadow-md transition-shadow">
-<div class="flex justify-between items-start mb-4">
+<div class="flex justify-between items-start mb-3">
 <div>
-<div class="flex items-center gap-2 mb-1">
-<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white">{{ roadmap.topic }}</h4>
-<span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded flex items-center gap-1">
-<span class="material-symbols-outlined text-[12px]">bolt</span> AI GENERATED
-</span>
+<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white">{{ roadmap.title }}</h4>
+<p class="text-slate-500 text-xs mt-1">
+{% if roadmap.start_date %}{{ roadmap.start_date.strftime('%b %d') }}{% endif %}
+{% if roadmap.start_date and roadmap.end_date %} → {% endif %}
+{% if roadmap.end_date %}{{ roadmap.end_date.strftime('%b %d, %Y') }}{% endif %}
+• {{ roadmap.items|length }} day(s)
+</p>
+{% if roadmap.description %}<p class="text-slate-400 text-xs mt-1">{{ roadmap.description }}</p>{% endif %}
 </div>
-<p class="text-slate-500 text-xs font-medium">{{ roadmap.subject }} • Created {{ roadmap.created_at.strftime('%b %d, %Y') }}</p>
+<span class="text-xs text-slate-400">{{ roadmap.created_at.strftime('%b %d, %Y') }}</span>
 </div>
+{% if roadmap.items %}
+<div class="space-y-2 mt-4">
+{% for item in roadmap.items|sort(attribute='day_number') %}
+<div class="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+<span class="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded flex-shrink-0">Day {{ item.day_number }}</span>
+<div class="flex-1">
+<p class="text-sm font-semibold text-slate-800 dark:text-white">{{ item.topic }}</p>
+{% if item.description %}<p class="text-xs text-slate-400 mt-0.5">{{ item.description }}</p>{% endif %}
 </div>
-<button onclick="viewRoadmap({{ roadmap.id }})" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-<span class="material-symbols-outlined text-sm">visibility</span> View Details
-</button>
+{% if item.estimated_time %}<span class="text-xs text-slate-400 flex-shrink-0">{{ item.estimated_time }}</span>{% endif %}
+</div>
+{% endfor %}
+</div>
+{% endif %}
 </div>
 </div>
 {% endfor %}
@@ -169,205 +182,12 @@ Create New Roadmap
 <span class="material-symbols-outlined text-4xl text-slate-400">route</span>
 </div>
 <h4 class="font-display text-lg font-bold text-slate-900 dark:text-white mb-2">No Roadmaps Yet</h4>
-<p class="text-slate-500 text-sm mb-6">Create your first AI-powered learning roadmap</p>
+<p class="text-slate-500 text-sm mb-6">Create your first learning roadmap for this classroom</p>
 <button onclick="openRoadmapModal()" class="px-6 py-3 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary/90 transition-all">
 Create Roadmap
 </button>
 </div>
 {% endif %}
-</div>
-</div>
-<div class="relative flex gap-8 mb-12 group">
-<div class="relative z-10 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white ring-8 ring-white dark:ring-background-dark">
-<span class="material-symbols-outlined">check</span>
-</div>
-<div class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm group-hover:shadow-md transition-shadow">
-<div class="flex justify-between items-start mb-4">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white">Kinematics</h4>
-<span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded flex items-center gap-1">
-<span class="material-symbols-outlined text-[12px]">bolt</span> AI OPTIMIZED
-                                    </span>
-</div>
-<p class="text-slate-500 text-xs font-medium flex items-center gap-1">
-<span class="material-symbols-outlined text-xs">schedule</span> Est. 2 Weeks
-                                </p>
-</div>
-<span class="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded">Completed</span>
-</div>
-<div class="mb-6">
-<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Key Topics</p>
-<div class="flex flex-wrap gap-2">
-<span class="px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-slate-700">Scalar & Vectors</span>
-<span class="px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-slate-700">Equations of Motion</span>
-<span class="px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-slate-700">Free Fall</span>
-</div>
-</div>
-<div class="flex gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-<button class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-<span class="material-symbols-outlined text-sm">visibility</span> View Resources
-                            </button>
-<button class="text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 flex items-center gap-1">
-<span class="material-symbols-outlined text-sm">quiz</span> Create Quiz
-                            </button>
-</div>
-</div>
-</div>
-<div class="relative flex gap-8 mb-12 group">
-<div class="relative z-10 w-12 h-12 rounded-full bg-white dark:bg-slate-900 border-4 border-primary flex items-center justify-center text-primary ring-8 ring-white dark:ring-background-dark shadow-lg shadow-primary/20">
-<span class="material-symbols-outlined animate-pulse">pending</span>
-</div>
-<div class="flex-1 bg-white dark:bg-slate-900 border-2 border-primary rounded-2xl p-6 shadow-xl shadow-primary/5">
-<div class="flex justify-between items-start mb-4">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white">Dynamics</h4>
-<span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded flex items-center gap-1">
-<span class="material-symbols-outlined text-[12px]">bolt</span> AI OPTIMIZED
-                                    </span>
-</div>
-<p class="text-slate-500 text-xs font-medium flex items-center gap-1">
-<span class="material-symbols-outlined text-xs">schedule</span> Est. 3 Weeks
-                                </p>
-</div>
-<span class="text-xs font-bold text-white bg-primary px-3 py-1 rounded-full shadow-sm">Current Chapter</span>
-</div>
-<div class="mb-6">
-<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Key Topics</p>
-<div class="flex flex-wrap gap-2">
-<span class="px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-slate-700">Newton's Laws</span>
-<span class="px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-slate-700">Friction</span>
-<span class="px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-slate-700">Momentum</span>
-</div>
-</div>
-<div class="flex gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-<button class="bg-primary text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">menu_book</span> View Resources
-                            </button>
-<button class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">quiz</span> Create Quiz
-                            </button>
-</div>
-</div>
-</div>
-<div class="relative flex items-center gap-8 mb-12">
-<div class="relative z-10 w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center text-white ring-8 ring-emerald-50 dark:ring-emerald-900/20 milestone-glow">
-<span class="material-symbols-outlined">emoji_events</span>
-</div>
-<div class="flex-1 flex items-center bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-2xl p-6 text-white shadow-lg shadow-emerald-200 dark:shadow-none">
-<div class="flex-1">
-<div class="flex items-center gap-2 mb-1">
-<h4 class="font-display text-xl font-bold">Mid-Term Examination</h4>
-<span class="px-2 py-0.5 bg-white/20 text-white text-[10px] font-bold rounded uppercase tracking-wider">Major Milestone</span>
-</div>
-<div class="flex items-center gap-4">
-<p class="text-white/80 text-sm flex items-center gap-1">
-<span class="material-symbols-outlined text-sm">calendar_today</span> Set Date: Oct 24, 2024
-                                </p>
-<div class="w-1 h-1 rounded-full bg-white/40"></div>
-<p class="text-white/80 text-sm font-bold flex items-center gap-1">
-<span class="material-symbols-outlined text-sm">timer</span> 14 Days Remaining
-                                </p>
-</div>
-</div>
-<button class="bg-white/10 hover:bg-white/20 transition-colors px-4 py-2 rounded-xl border border-white/20 text-xs font-bold flex items-center gap-2">
-                            Set Reminder
-                        </button>
-</div>
-<div class="absolute left-0 right-0 h-px bg-emerald-100 dark:bg-emerald-800/50 -z-10 mt-12"></div>
-</div>
-<div class="relative flex gap-8 mb-12 group opacity-60 hover:opacity-100 transition-opacity">
-<div class="relative z-10 w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-400 ring-8 ring-white dark:ring-background-dark">
-<span class="material-symbols-outlined">lock</span>
-</div>
-<div class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
-<div class="flex justify-between items-start mb-4">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white">Work & Energy</h4>
-</div>
-<p class="text-slate-500 text-xs font-medium flex items-center gap-1">
-<span class="material-symbols-outlined text-xs">schedule</span> Est. 2.5 Weeks
-                                </p>
-</div>
-<span class="text-xs font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">Locked</span>
-</div>
-<div class="mb-6">
-<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Key Topics</p>
-<div class="flex flex-wrap gap-2">
-<span class="px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-400 border border-slate-100 dark:border-slate-700">Work & Kinetic Energy</span>
-<span class="px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-400 border border-slate-100 dark:border-slate-700">Potential Energy</span>
-</div>
-</div>
-<div class="flex gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-<button class="text-xs font-bold text-slate-400 flex items-center gap-1 cursor-not-allowed">
-<span class="material-symbols-outlined text-sm">visibility</span> View Resources
-                            </button>
-<button class="text-xs font-bold text-slate-400 flex items-center gap-1 cursor-not-allowed">
-<span class="material-symbols-outlined text-sm">quiz</span> Create Quiz
-                            </button>
-</div>
-</div>
-</div>
-<div class="relative flex gap-8 mb-12 group opacity-60 hover:opacity-100 transition-opacity">
-<div class="relative z-10 w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-400 ring-8 ring-white dark:ring-background-dark">
-<span class="material-symbols-outlined">lock</span>
-</div>
-<div class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
-<div class="flex justify-between items-start mb-4">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<h4 class="font-display text-lg font-bold text-slate-900 dark:text-white">Properties of Matter</h4>
-<span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded flex items-center gap-1">
-<span class="material-symbols-outlined text-[12px]">bolt</span> AI OPTIMIZED
-                                    </span>
-</div>
-<p class="text-slate-500 text-xs font-medium flex items-center gap-1">
-<span class="material-symbols-outlined text-xs">schedule</span> Est. 3 Weeks
-                                </p>
-</div>
-<span class="text-xs font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">Locked</span>
-</div>
-<div class="mb-6">
-<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Key Topics</p>
-<div class="flex flex-wrap gap-2">
-<span class="px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-400 border border-slate-100 dark:border-slate-700">Kinetic Molecular Model</span>
-<span class="px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded text-xs text-slate-400 border border-slate-100 dark:border-slate-700">Pressure in Liquids</span>
-</div>
-</div>
-<div class="flex gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-<button class="text-xs font-bold text-slate-400 flex items-center gap-1 cursor-not-allowed">
-<span class="material-symbols-outlined text-sm">visibility</span> View Resources
-                            </button>
-<button class="text-xs font-bold text-slate-400 flex items-center gap-1 cursor-not-allowed">
-<span class="material-symbols-outlined text-sm">quiz</span> Create Quiz
-                            </button>
-</div>
-</div>
-</div>
-<div class="relative flex items-center gap-8 mb-12">
-<div class="relative z-10 w-12 h-12 rounded-full bg-slate-800 dark:bg-slate-700 flex items-center justify-center text-emerald-400 ring-8 ring-white dark:ring-background-dark border-2 border-emerald-500/50">
-<span class="material-symbols-outlined">star</span>
-</div>
-<div class="flex-1 flex items-center bg-white dark:bg-slate-900 border-2 border-dashed border-emerald-500/30 rounded-2xl p-6 shadow-sm">
-<div class="flex-1">
-<div class="flex items-center gap-2 mb-1">
-<h4 class="font-display text-xl font-bold text-slate-900 dark:text-white">Final Board Exam Prep</h4>
-<span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded uppercase tracking-wider">Course Conclusion</span>
-</div>
-<div class="flex items-center gap-4">
-<div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 px-3 py-1 rounded-lg border border-slate-100 dark:border-slate-700">
-<span class="material-symbols-outlined text-xs text-slate-400">event</span>
-<input class="bg-transparent border-none p-0 text-xs font-medium text-slate-600 dark:text-slate-300 focus:ring-0 w-28" placeholder="Set Date" type="text" value="March 15, 2025"/>
-</div>
-<div class="w-1 h-1 rounded-full bg-slate-300"></div>
-<p class="text-slate-400 text-xs font-medium italic">Date can be adjusted based on board announcements</p>
-</div>
-</div>
-<button class="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 transition-colors px-4 py-2 rounded-xl text-xs font-bold">
-                            View Study Plan
-                        </button>
 </div>
 </div>
 </div>
