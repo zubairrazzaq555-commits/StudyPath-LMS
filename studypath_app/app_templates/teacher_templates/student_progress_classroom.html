@@ -85,7 +85,7 @@
     <!-- Tabs -->
     <div class="bg-white border-b border-slate-200 px-8">
         <div class="flex gap-8">
-            <a href="{% if classroom %}{{ url_for('teacher_roadmap', subject=classroom.subject) }}?classroom_id={{ cid }}{% else %}{{ url_for('teacher_classrooms') }}{% endif %}" class="py-4 text-sm font-semibold text-slate-500 hover:text-slate-700 border-b-2 border-transparent transition-all">Roadmap</a>
+            <a href="{{ url_for('teacher_roadmap', subject=classroom.subject) }}?classroom_id={{ cid }}" class="py-4 text-sm font-semibold text-slate-500 hover:text-slate-700 border-b-2 border-transparent transition-all">Roadmap</a>
             <a href="{{ url_for('teacher_student_progress') }}?classroom_id={{ cid }}" class="py-4 text-sm font-semibold active-tab transition-all">Student Progress</a>
             <a href="{{ url_for('teacher_knowledge_dashboard') }}?classroom_id={{ cid }}" class="py-4 text-sm font-semibold text-slate-500 hover:text-slate-700 border-b-2 border-transparent transition-all">Knowledge Base</a>
             <a href="{{ url_for('teacher_quiz_factory') }}?classroom_id={{ cid }}" class="py-4 text-sm font-semibold text-slate-500 hover:text-slate-700 border-b-2 border-transparent transition-all">Quiz Factory</a>
