@@ -261,9 +261,11 @@ def teacher_student_progress():
             enrollments = Enrollment.query.filter_by(classroom_id=classroom_id).all()
             student_ids = [e.student_id for e in enrollments]
             enrolled_students = User.query.filter(User.id.in_(student_ids)).all()
+    subject = classroom.subject if classroom else ''
     return render_template('teacher_templates/student_progress_classroom.html',
                            classroom=classroom,
                            classroom_id=classroom_id,
+                           subject=subject,
                            enrolled_students=enrolled_students,
                            active_page='teacher_student_progress',
                            user=current_user)
@@ -279,9 +281,11 @@ def teacher_knowledge_dashboard():
     classroom = None
     if classroom_id:
         classroom = Classroom.query.filter_by(id=classroom_id, teacher_id=current_user.id).first()
+    subject = classroom.subject if classroom else ''
     return render_template('teacher_templates/knowledge_classroom_dashboard.html',
                            classroom=classroom,
                            classroom_id=classroom_id,
+                           subject=subject,
                            active_page='teacher_knowledge_dashboard',
                            user=current_user)
 
@@ -296,9 +300,11 @@ def teacher_quiz_factory():
     classroom = None
     if classroom_id:
         classroom = Classroom.query.filter_by(id=classroom_id, teacher_id=current_user.id).first()
+    subject = classroom.subject if classroom else ''
     return render_template('teacher_templates/quiz_classroom.html',
                            classroom=classroom,
                            classroom_id=classroom_id,
+                           subject=subject,
                            active_page='teacher_quiz_factory',
                            user=current_user)
 
