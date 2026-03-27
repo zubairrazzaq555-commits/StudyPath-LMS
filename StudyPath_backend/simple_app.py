@@ -226,23 +226,27 @@ def teacher_profile():
     return render_template('teacher_templates/teacher_profile.html', active_page='teacher_profile', user=current_user)
 
 
-@app.route('/teacher/roadmap', defaults={'subject': 'Physics'})
+@app.route('/teacher/roadmap', defaults={'subject': None})
 @app.route('/teacher/roadmap/<subject>')
 @login_required
 def teacher_roadmap(subject):
     if current_user.role != 'teacher':
         flash('Access denied. Teacher area only.', 'danger')
         return redirect(url_for('login'))
-    # classroom_id query param se lo (e.g. /teacher/roadmap/Physics?classroom_id=1)
     classroom_id = request.args.get('classroom_id', type=int)
-    roadmaps = []
-    if classroom_id:
-        roadmaps = Roadmap.query.filter_by(classroom_id=classroom_id).order_by(Roadmap.created_at.desc()).all()
+    # classroom_id nahi hai ya subject nahi — classrooms page pe bhejo
+    if not classroom_id or not subject:
+        return redirect(url_for('teacher_classrooms'))
+    classroom = Classroom.query.filter_by(id=classroom_id, teacher_id=current_user.id).first()
+    if not classroom:
+        return redirect(url_for('teacher_classrooms'))
+    roadmaps = Roadmap.query.filter_by(classroom_id=classroom_id).order_by(Roadmap.created_at.desc()).all()
     return render_template('teacher_templates/roadmap_classroom.html',
                            subject=subject,
                            classroom_id=classroom_id,
+                           classroom=classroom,
                            roadmaps=roadmaps,
-                           active_page='teacher_dashboard',
+                           active_page='teacher_roadmap',
                            user=current_user)
 
 
